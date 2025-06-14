@@ -129,7 +129,7 @@ manage_projects() {
   select action in "${actions[@]}"; do
     case "$action" in
       "Manage environment variables") manage_env_vars "$project_dir" "$pkg" ;;
-      "Go back") exec "$0" ;;
+      "Go back") break ;;
       *) echo "Invalid selection." ;;
     esac
   done
@@ -142,7 +142,7 @@ manage_monorepo() {
   select action in "${actions[@]}"; do
     case "$action" in
       "Update from template") update_monorepo_template ;;
-      "Go back") return ;;
+      "Go back") break ;;
       *) echo "Invalid selection." ;;
     esac
   done
@@ -191,15 +191,20 @@ fi
 
 
 # Interactive CLI
-echo "Interactive Orbital CLI"
-PS3="Select an option: "
-options=("Create project" "Manage projects" "Manage monorepo" "Exit")
-select opt in "${options[@]}"; do
-  case "$opt" in
-    "Create project")   create_project ;;
-    "Manage projects")  manage_projects ;;
-    "Manage monorepo")  manage_monorepo ;;
-    "Exit")             echo "Goodbye!"; exit 1 ;;
-    *)                  echo "Invalid option." ;;
-  esac
-done
+interactive_cli() {
+  while true; do
+    echo "Interactive Orbital CLI"
+    PS3="Select an option: "
+    options=("Create project" "Manage projects" "Manage monorepo" "Exit")
+    select opt in "${options[@]}"; do
+      case "$opt" in
+        "Create project")   create_project; break ;;
+        "Manage projects")  manage_projects; break ;;
+        "Manage monorepo")  manage_monorepo; break ;;
+        "Exit")             echo "Goodbye!"; exit 0 ;;
+        *)                  echo "Invalid option." ;;
+      esac
+    done
+  done
+}
+interactive_cli
