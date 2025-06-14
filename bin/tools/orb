@@ -4,111 +4,138 @@ set -e
 # Print ASCII art and version
 version=$(jq -r .version package.json)
 cat << 'EOF'
-                 888      d8b 888             888 
-                 888      Y8P 888             888 
-                 888          888             888 
- .d88b.  888d888 88888b.  888 888888  8888b.  888 
-d88""88b 888P"   888 "88b 888 888        "88b 888 
-888  888 888     888  888 888 888    .d888888 888 
-Y88..88P 888     888 d88P 888 Y88b.  888  888 888 
- "Y88P"  888     88888P"  888  "Y888 "Y888888 888 
+  ____   ____  ____
+ / __ \ / __ \| __ \
+| |  | | |  | |  _ \
+| |  | | |  | | |_) |
+| |__| | |__| |____/
+ \____/ \____/|_____/
 EOF
-printf "\033[32mVersion: %s\033[0m\n" "$version"
+printf "\033[32mVersion: %s\033[0m\n\n" "$version"
 
+# Create project from template
+create_project() {
+  local category template package_name dest_base template_dir dest_dir owner pkg
+  # Interactive selection if args not provided
+  if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
+    category="$1"; template="$2"; package_name="$3"
+  else
+    PS3="Select category: "
+    categories=("library" "service" "client")
+    select category in "${categories[@]}"; do
+      [[ " ${categories[*]} " == *" $category "* ]] && break
+      echo "Invalid selection."
+    done
 
-# Support non-interactive invocation: yarn orb generate <library|service|client> <project-name>
-if [ "$1" = "generate" ] && [ $# -eq 3 ]; then
-  type="$2"
-  project="$3"
-  case "$type" in
-    library)
-      template_dir="libs/orbital/template"
-      dest_base="libs/orbital"
-      ;;
-    service)
-      template_dir="services/orbital/template"
-      dest_base="services/orbital"
-      ;;
-    client)
-      template_dir="clients/orbital/template"
-      dest_base="clients/orbital"
-      ;;
-    *)
-      echo "Usage: orb generate [library|service|client] <project-name>"
-      exit 1
-      ;;
-  esac
-  dest_dir="$dest_base/$project"
-  if [[ -d "$dest_dir" ]]; then
-    echo "Directory $dest_dir already exists!"
-    exit 1
+    # List available templates
+    templates=()
+    for d in templates/*; do
+      [ -d "$d" ] && templates+=("$(basename "$d")")
+    done
+    PS3="Select template to use: "
+    select template in "${templates[@]}"; do
+      [[ " ${templates[*]} " == *" $template "* ]] && break
+      echo "Invalid selection."
+    done
+
+    read -p "Enter project name (scoped @owner/name or unscoped): " package_name
   fi
+
+  case "$category" in
+    library)  dest_base="libs";    ;;
+    service)  dest_base="services";;
+    client)   dest_base="clients";  ;;
+    *) echo "Invalid category: $category"; exit 1 ;;
+  esac
+
+  template_dir="templates/$template"
+  [ -d "$template_dir" ] || { echo "Template not found: $template_dir"; exit 1; }
+
+  # Determine destination directory
+  if [[ "$package_name" =~ ^@([^/]+)/(.+)$ ]]; then
+    owner="${BASH_REMATCH[1]}"; pkg="${BASH_REMATCH[2]}"
+    dest_dir="$dest_base/$owner/$pkg"
+  else
+    pkg="$package_name"
+    dest_dir="$dest_base/$pkg"
+  fi
+
+  if [ -d "$dest_dir" ]; then
+    echo "Project directory exists: $dest_dir"; exit 1
+  fi
+
   mkdir -p "$dest_dir"
-  rsync -av --exclude-from="$template_dir/.gitignore" "$template_dir"/ "$dest_dir"/
-  (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
-  echo "Generated $type $project in $dest_dir."
+  exclude_opt=""
+  [ -f "$template_dir/.gitignore" ] && exclude_opt="--exclude-from=$template_dir/.gitignore"
+  rsync -av $exclude_opt "$template_dir"/ "$dest_dir"/
+
+  # Update package.json name
+  (cd "$dest_dir" && jq ".name = \"$package_name\"" package.json > tmp.$$.json && mv tmp.$$.json package.json)
+
+  echo "Created project $package_name in $dest_dir"
   exit 0
+}
+
+# Add or update environment variables in .env.template
+manage_env_vars() {
+  local project_dir="$1" pkg="$2" varname value slug prefix env_file
+  read -p "Enter environment variable name: " varname
+  read -p "Enter default value: " value
+  slug="${pkg//@/}"; slug="${slug//\//_}"
+  prefix=$(printf "%s_%s" "$slug" "$varname" | tr '[:lower:]' '[:upper:]')
+  env_file="$project_dir/.env.template"
+  touch "$env_file"
+  sed -i.bak "\|^${prefix}=|d" "$env_file" && rm "${env_file}.bak"
+  echo "${prefix}=${value}" >> "$env_file"
+  echo "Added ${prefix} to ${env_file}"
+  exit 0
+}
+
+# Manage projects menu
+manage_projects() {
+  local dirs=() names=() pkg project_dir action
+  for base in libs/orbital services/orbital clients/orbital; do
+    for d in "$base"/*; do
+      [ -f "$d/package.json" ] || continue
+      [ "$(basename "$d")" != "template" ] || continue
+      pkg=$(jq -r .name "$d/package.json")
+      dirs+=("$d"); names+=("$pkg")
+    done
+  done
+
+  [ "${#names[@]}" -gt 0 ] || { echo "No projects found."; exit 1; }
+
+  PS3="Select project: "
+  select pkg in "${names[@]}"; do
+    [ -n "$pkg" ] && project_dir="${dirs[$((REPLY-1))]}" && break
+    echo "Invalid selection."
+  done
+
+  PS3="Select action: "
+  actions=("Manage environment variables" "Go back")
+  select action in "${actions[@]}"; do
+    case "$action" in
+      "Manage environment variables") manage_env_vars "$project_dir" "$pkg" ;;
+      "Go back") return ;;
+      *) echo "Invalid selection." ;;
+    esac
+  done
+}
+
+# Support non-interactive create: orb create <category> <template> <package_name>
+if [ "$1" = "create" ] && [ $# -eq 4 ]; then
+  create_project "$2" "$3" "$4"
 fi
 
+# Interactive CLI
 echo "Interactive Orbital CLI"
 PS3="Select an option: "
-options=("Generate from template" "Exit")
+options=("Create project" "Manage projects" "Exit")
 select opt in "${options[@]}"; do
-  case $opt in
-    "Generate from template")
-      PS3="Select type to generate: "
-      types=("library" "service" "client")
-      select type in "${types[@]}"; do
-        if [[ " ${types[*]} " == *" $type "* ]]; then
-          read -p "Enter new project name (kebab-case): " project
-          # Determine template and destination directories
-          case $type in
-            "library")
-              template_dir="libs/orbital/template"
-              dest_base="libs/orbital"
-              ;;
-            "service")
-              template_dir="services/orbital/template"
-              dest_base="services/orbital"
-              ;;
-            "client")
-              template_dir="clients/orbital/template"
-              dest_base="clients/orbital"
-              ;;
-          esac
-          dest_dir="$dest_base/$project"
-          if [[ -d "$dest_dir" ]]; then
-            echo "Directory $dest_dir already exists!"
-            exit 1
-          fi
-          mkdir -p "$dest_dir"
-          # Ensure template directory exists
-          if [ ! -d "$template_dir" ]; then
-            echo "Template directory not found: $template_dir"
-            exit 1
-          fi
-          # Prepare rsync exclude option if .gitignore exists
-          exclude_opt=""
-          if [ -f "$template_dir/.gitignore" ]; then
-            exclude_opt="--exclude-from=$template_dir/.gitignore"
-          fi
-          rsync -av $exclude_opt "$template_dir"/ "$dest_dir"/
-          # Update package.json name
-          (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
-          echo "Generated $type $project in $dest_dir."
-          break
-        else
-          echo "Invalid selection."
-        fi
-      done
-      break
-      ;;
-    "Exit")
-      echo "Goodbye!"
-      break
-      ;;
-    *)
-      echo "Invalid option."
-      ;;
+  case "$opt" in
+    "Create project")   create_project ;;
+    "Manage projects")  manage_projects ;;
+    "Exit")             echo "Goodbye!"; exit 0 ;;
+    *)                  echo "Invalid option." ;;
   esac
 done

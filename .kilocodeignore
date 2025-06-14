@@ -1,0 +1,42 @@
+# Node modules
+node_modules/
+
+# Build artifacts/backups
+dist.bak/
+
+# Dataset directory
+datasets/
+
+# Proof of concept directory
+poc/
+
+# Ignore data directories within services
+services/*/data/
+
+# Cache directories
+.cache/
+*.cache/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# Log files
+*.log
+
+# TypeScript generated files
+*.js.map
+*.d.ts.map
+
+services/*/node_modules/
+
+services/*/dist/
+
+services/*/.turbo/
+
+services/*/.cache/
+
+services/*/tmp/
+
+services/*/temp/
