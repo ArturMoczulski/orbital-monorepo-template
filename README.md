@@ -41,7 +41,8 @@ yarn build      # Build all packages
 yarn test       # Run all tests
 yarn lint       # Lint all packages
 yarn orb        # Launch the interactive CLI
-yarn orb monorepo update # Update the monorepo by merging from monorepo-template remote
+yarn orb monorepo install # Install the 'monorepo-template' remote for this repo.
+yarn orb monorepo update  # Update the monorepo by merging from monorepo-template remote
 ```
 
 ## CLI Usage
@@ -63,6 +64,7 @@ Manage existing projects and environment variables:
 
 ```bash
 yarn orb manage
+yarn orb monorepo install # Install the 'monorepo-template' remote for this repo.
 yarn orb monorepo update  # Update the monorepo by merging from monorepo-template remote
 ```
 

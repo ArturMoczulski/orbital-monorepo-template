@@ -137,15 +137,29 @@ manage_projects() {
  
 # Manage monorepo menu
 manage_monorepo() {
+  echo "Manage Monorepo"
   PS3="Select action: "
-  actions=("Update from template" "Go back")
+  actions=("Install template remote" "Update from template" "Go back")
   select action in "${actions[@]}"; do
     case "$action" in
+      "Install template remote") install_monorepo_template ;;
       "Update from template") update_monorepo_template ;;
       "Go back") return ;;
       *) echo "Invalid selection." ;;
     esac
   done
+}
+ 
+# Install monorepo template remote
+install_monorepo_template() {
+  local remote="monorepo-template"
+  local url="git@github.com:ArturMoczulski/orbital-monorepo-template.git"
+  if git remote | grep -q "$remote"; then
+    git remote set-url "$remote" "$url" && echo "Updated $remote remote to $url"
+  else
+    git remote add "$remote" "$url" && echo "Added $remote remote pointing to $url"
+  fi
+  exit 0
 }
  
 # Update monorepo from template remote
@@ -164,6 +178,11 @@ update_monorepo_template() {
 if [ "$1" = "monorepo" ] && [ "$2" = "update" ]; then
   update_monorepo_template
 fi
+
+# Support non-interactive monorepo install: orb monorepo install
+if [ "$1" = "monorepo" ] && [ "$2" = "install" ]; then
+  install_monorepo_template
+fi
 if [ "$1" = "help" ] || [ "$1" = "--help" ]; then
   cat <<EOF
 Usage: orb [command] [options]
@@ -171,12 +190,14 @@ Usage: orb [command] [options]
 Commands:
   create|generate <library|service|client> <template> <project-name>   Create a new project from a template.
   manage                                                           Manage existing projects and environment variables.
+  monorepo install                                                 Install the 'monorepo-template' remote for this repo.
   monorepo update                                                  Update the monorepo by merging from monorepo-template remote.
   help                                                             Show this help message.
 
 Examples:
   yarn orb generate library ts-lib my-new-lib
   yarn orb create service nestjs my-service
+  yarn orb monorepo install
   yarn orb monorepo update
 EOF
   exit 0
