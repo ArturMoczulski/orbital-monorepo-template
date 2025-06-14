@@ -1,0 +1,2 @@
+# Use custom merge driver for package.json
+package.json merge=packagejson
