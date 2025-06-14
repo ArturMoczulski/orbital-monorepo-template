@@ -4,14 +4,16 @@ set -e
 # Print ASCII art and version
 version=$(jq -r .version package.json)
 cat << 'EOF'
-  ____   ____  ____
- / __ \ / __ \| __ \
-| |  | | |  | |  _ \
-| |  | | |  | | |_) |
-| |__| | |__| |____/
- \____/ \____/|_____/
+                 888      d8b 888             888 
+                 888      Y8P 888             888 
+                 888          888             888 
+ .d88b.  888d888 88888b.  888 888888  8888b.  888 
+d88""88b 888P"   888 "88b 888 888        "88b 888 
+888  888 888     888  888 888 888    .d888888 888 
+Y88..88P 888     888 d88P 888 Y88b.  888  888 888 
+ "Y88P"  888     88888P"  888  "Y888 "Y888888 888 
 EOF
-echo -e "\e[32mVersion: $version\e[0m"
+printf "\033[32mVersion: %s\033[0m\n" "$version"
 
 
 # Support non-interactive invocation: yarn orb generate <library|service|client> <project-name>
