@@ -15,10 +15,10 @@ printf "\033[32mVersion: %s\033[0m\n\n" "$version"
 
 # Create project from template
 create_project() {
-  local category template package_name dest_base template_dir dest_dir owner pkg
-  # Interactive selection if args not provided
-  if [ -n "$1" ] && [ -n "$2" ] && [ -n "$3" ]; then
-    category="$1"; template="$2"; package_name="$3"
+  local category template package_name dest_base template_dir dest_dir owner pkg initial_pkg test_dir
+  # Category and template selection from args or interactive
+  if [ -n "$1" ] && [ -n "$2" ]; then
+    category="$1"; template="$2"; initial_pkg="$3"
   else
     PS3="Select category: "
     categories=("library" "service" "client")
@@ -38,7 +38,6 @@ create_project() {
       echo "Invalid selection."
     done
 
-    read -p "Enter project name (scoped @owner/name or unscoped): " package_name
   fi
 
   case "$category" in
@@ -48,17 +47,31 @@ create_project() {
     *) echo "Invalid category: $category"; exit 1 ;;
   esac
 
+  # Prompt for project name until an unused path is provided
+  while true; do
+    if [ -n "$initial_pkg" ]; then
+      package_name="$initial_pkg"; initial_pkg=""
+    else
+      read -p "Enter project name (scoped @owner/name or unscoped): " package_name
+    fi
+    if [[ "$package_name" =~ ^@([^/]+)/(.+)$ ]]; then
+      owner="${BASH_REMATCH[1]}"; pkg="${BASH_REMATCH[2]}"
+      test_dir="$dest_base/$owner/$pkg"
+    else
+      pkg="$package_name"; test_dir="$dest_base/$pkg"
+    fi
+
+    if [ -d "$test_dir" ]; then
+      echo "Project name taken: $package_name (path $test_dir exists). Please choose another."
+    else
+      dest_dir="$test_dir"
+      break
+    fi
+  done
+
   template_dir="templates/$template"
   [ -d "$template_dir" ] || { echo "Template not found: $template_dir"; exit 1; }
 
-  # Determine destination directory
-  if [[ "$package_name" =~ ^@([^/]+)/(.+)$ ]]; then
-    owner="${BASH_REMATCH[1]}"; pkg="${BASH_REMATCH[2]}"
-    dest_dir="$dest_base/$owner/$pkg"
-  else
-    pkg="$package_name"
-    dest_dir="$dest_base/$pkg"
-  fi
 
   if [ -d "$dest_dir" ]; then
     echo "Project directory exists: $dest_dir"; exit 1
@@ -122,8 +135,8 @@ manage_projects() {
   done
 }
 
-# Support non-interactive create: orb create <category> <template> <package_name>
-if [ "$1" = "create" ] && [ $# -eq 4 ]; then
+# Support non-interactive create/generate: orb create|generate <category> <template> <package_name>
+if { [ "$1" = "create" ] || [ "$1" = "generate" ]; } && [ $# -eq 4 ]; then
   create_project "$2" "$3" "$4"
 fi
 
