@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -e
 
+# Print ASCII art and version
+version=$(jq -r .version package.json)
+cat << 'EOF'
+  ____   ____  ____
+ / __ \ / __ \| __ \
+| |  | | |  | |  _ \
+| |  | | |  | | |_) |
+| |__| | |__| |____/
+ \____/ \____/|_____/
+EOF
+echo -e "\e[32mVersion: $version\e[0m"
+
+
 # Support non-interactive invocation: yarn orb generate <library|service|client> <project-name>
 if [ "$1" = "generate" ] && [ $# -eq 3 ]; then
   type="$2"
@@ -31,7 +44,7 @@ if [ "$1" = "generate" ] && [ $# -eq 3 ]; then
   mkdir -p "$dest_dir"
   rsync -av --exclude-from="$template_dir/.gitignore" "$template_dir"/ "$dest_dir"/
   (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
-  echo "Generated $type $project from template at $dest_dir."
+  echo "Generated $type $project in $dest_dir."
   exit 0
 fi
 
@@ -67,11 +80,20 @@ select opt in "${options[@]}"; do
             exit 1
           fi
           mkdir -p "$dest_dir"
-          # Copy files using rsync, excluding patterns from template's .gitignore
-          rsync -av --exclude-from="$template_dir/.gitignore" "$template_dir"/ "$dest_dir"/
+          # Ensure template directory exists
+          if [ ! -d "$template_dir" ]; then
+            echo "Template directory not found: $template_dir"
+            exit 1
+          fi
+          # Prepare rsync exclude option if .gitignore exists
+          exclude_opt=""
+          if [ -f "$template_dir/.gitignore" ]; then
+            exclude_opt="--exclude-from=$template_dir/.gitignore"
+          fi
+          rsync -av $exclude_opt "$template_dir"/ "$dest_dir"/
           # Update package.json name
           (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
-          echo "Generated $type $project from template at $dest_dir."
+          echo "Generated $type $project in $dest_dir."
           break
         else
           echo "Invalid selection."
