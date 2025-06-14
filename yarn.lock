@@ -743,7 +743,9 @@ __metadata:
   dependencies:
     "@types/jest": "npm:^29.0.0"
     jest: "npm:^29.0.0"
+    rimraf: "npm:^6.0.0"
     ts-jest: "npm:^29.0.0"
+    typescript: "npm:^5.0.0"
   languageName: unknown
   linkType: soft
 
@@ -1346,6 +1348,45 @@ __metadata:
   version: 29.6.3
   resolution: "diff-sequences@npm:29.6.3"
   checksum: 10c0/32e27ac7dbffdf2fb0eb5a84efd98a9ad084fbabd5ac9abb8757c6770d5320d2acd172830b28c4add29bb873d59420601dfc805ac4064330ce59b1adfd0593b2
+  languageName: node
+  linkType: hard
+
+"dotenv-expand@npm:*":
+  version: 12.0.2
+  resolution: "dotenv-expand@npm:12.0.2"
+  dependencies:
+    dotenv: "npm:^16.4.5"
+  checksum: 10c0/c96fd1b74d1dbb72fda6ad5df4f0ae83cba438c8090231c4da4344f8aa0448d67eb70f7fcb317c8a9bf44191545b393e8cdc1fa9f301a66b6414a22d1135f81e
+  languageName: node
+  linkType: hard
+
+"dotenv-flow-cli@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "dotenv-flow-cli@npm:1.1.1"
+  dependencies:
+    cross-spawn: "npm:^7.0.3"
+    dotenv-expand: "npm:*"
+    dotenv-flow: "npm:*"
+    minimist: "npm:^1.2.6"
+  bin:
+    dotenv-flow: cli.js
+  checksum: 10c0/5453dcdb19350bdad37e0d08b17d832dcd8b5dbf1bb9281eb8db5665d95b515cc74a83ac8d144078e4fd598cb99f5e58e4965e954ab8007671fdb54a160abdd1
+  languageName: node
+  linkType: hard
+
+"dotenv-flow@npm:*, dotenv-flow@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "dotenv-flow@npm:4.1.0"
+  dependencies:
+    dotenv: "npm:^16.0.0"
+  checksum: 10c0/1f88bc4edfede3b3066b3980e25f7df1e008233f5a2506580378289aa042574a68c7fdb2433e3b96c9456aa9534de1e173f2fe8eb815476bec9d4b8812198ad9
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.0, dotenv@npm:^16.4.5":
+  version: 16.5.0
+  resolution: "dotenv@npm:16.5.0"
+  checksum: 10c0/5bc94c919fbd955bf0ba44d33922a1e93d1078e64a1db5c30faeded1d996e7a83c55332cb8ea4fae5a9ca4d0be44cbceb95c5811e70f9f095298df09d1997dd9
   languageName: node
   linkType: hard
 
@@ -2616,6 +2657,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimist@npm:^1.2.6":
+  version: 1.2.8
+  resolution: "minimist@npm:1.2.8"
+  checksum: 10c0/19d3fcdca050087b84c2029841a093691a91259a47def2f18222f41e7645a0b7c44ef4b40e88a1e58a40c84d2ef0ee6047c55594d298146d0eb3f6b737c20ce6
+  languageName: node
+  linkType: hard
+
 "minipass-collect@npm:^2.0.1":
   version: 2.0.1
   resolution: "minipass-collect@npm:2.0.1"
@@ -2805,6 +2853,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "orbital@workspace:."
   dependencies:
+    dotenv-flow: "npm:^4.1.0"
+    dotenv-flow-cli: "npm:^1.1.1"
     rimraf: "npm:^6.0.1"
     turbo: "npm:^2.5.4"
     typescript: "npm:^5.8.3"
@@ -3071,7 +3121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^6.0.1":
+"rimraf@npm:^6.0.0, rimraf@npm:^6.0.1":
   version: 6.0.1
   resolution: "rimraf@npm:6.0.1"
   dependencies:
@@ -3508,7 +3558,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.8.3":
+"typescript@npm:^5.0.0, typescript@npm:^5.8.3":
   version: 5.8.3
   resolution: "typescript@npm:5.8.3"
   bin:
@@ -3518,7 +3568,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.0.0#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
   version: 5.8.3
   resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:
