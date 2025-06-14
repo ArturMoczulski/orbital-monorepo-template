@@ -1,6 +1,40 @@
 #!/usr/bin/env bash
 set -e
 
+# Support non-interactive invocation: yarn orb generate <library|service|client> <project-name>
+if [ "$1" = "generate" ] && [ $# -eq 3 ]; then
+  type="$2"
+  project="$3"
+  case "$type" in
+    library)
+      template_dir="libs/orbital/template"
+      dest_base="libs/orbital"
+      ;;
+    service)
+      template_dir="services/orbital/template"
+      dest_base="services/orbital"
+      ;;
+    client)
+      template_dir="clients/orbital/template"
+      dest_base="clients/orbital"
+      ;;
+    *)
+      echo "Usage: orb generate [library|service|client] <project-name>"
+      exit 1
+      ;;
+  esac
+  dest_dir="$dest_base/$project"
+  if [[ -d "$dest_dir" ]]; then
+    echo "Directory $dest_dir already exists!"
+    exit 1
+  fi
+  mkdir -p "$dest_dir"
+  rsync -av --exclude-from="$template_dir/.gitignore" "$template_dir"/ "$dest_dir"/
+  (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
+  echo "Generated $type $project from template at $dest_dir."
+  exit 0
+fi
+
 echo "Interactive Orbital CLI"
 PS3="Select an option: "
 options=("Generate from template" "Exit")
