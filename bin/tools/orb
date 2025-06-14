@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -e
+
+echo "Interactive Orbital CLI"
+PS3="Select an option: "
+options=("Generate from template" "Exit")
+select opt in "${options[@]}"; do
+  case $opt in
+    "Generate from template")
+      PS3="Select type to generate: "
+      types=("library" "service" "client")
+      select type in "${types[@]}"; do
+        if [[ " ${types[*]} " == *" $type "* ]]; then
+          read -p "Enter new project name (kebab-case): " project
+          template_dir=""
+          case $type in
+            "library") template_dir="libs/orbital/template" ;;
+            "service") template_dir="services/orbital/template" ;;
+            "client") template_dir="clients/orbital/template" ;;
+          esac
+          dest_dir="$type/$project"
+          if [[ -d "$dest_dir" ]]; then
+            echo "Directory $dest_dir already exists!"
+            exit 1
+          fi
+          cp -R "$template_dir" "$dest_dir"
+          (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
+          echo "Generated $type $project from template."
+          break
+        else
+          echo "Invalid selection."
+        fi
+      done
+      break
+      ;;
+    "Exit")
+      echo "Goodbye!"
+      break
+      ;;
+    *)
+      echo "Invalid option."
+      ;;
+  esac
+done
