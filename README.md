@@ -24,12 +24,27 @@ This repository contains a **living template** for a full-stack monorepo powered
 
 ## Getting Started
 
-Clone the template or use GitHub’s "Use this template" button:
+Clone or fork the repository:
 
 ```bash
 git clone git@github.com:ArturMoczulski/orbital-monorepo-template.git my-project
+# or fork on GitHub and then clone your fork
 cd my-project
-yarn
+yarn orb monorepo install
+```
+
+**Note:** If you cloned the repository directly (instead of forking), after running `yarn orb monorepo install`, update your `origin` remote to point to your new GitHub repository:
+
+```bash
+git remote set-url origin git@github.com:<your-username>/<your-repo>.git
+```
+
+## Staying Up to Date
+
+When the upstream monorepo receives updates, you can pull new changes into your project:
+
+```bash
+yarn orb monorepo update
 ```
 
 ## Yarn Scripts
