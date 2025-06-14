@@ -14,6 +14,7 @@ console.log(figlet.textSync("orb"));
 if (process.argv.length <= 2) {
   process.argv.push("manage");
 }
+
 function run(cmd, opts = {}) {
   execSync(cmd, { stdio: "inherit", ...opts });
 }
@@ -98,63 +99,134 @@ program
   .command("manage")
   .description("Launch interactive CLI")
   .action(async () => {
-    const { choice } = await inquirer.prompt({
-      type: "list",
-      name: "choice",
-      message: "Select an option:",
-      choices: ["Create project", "Manage projects", "Manage monorepo", "Exit"],
-    });
-    if (choice === "Create project") {
-      const answers = await inquirer.prompt([
-        {
-          type: "list",
-          name: "category",
-          message: "Select category:",
-          choices: ["library", "service", "client"],
-        },
-        {
-          type: "list",
-          name: "template",
-          message: "Select template:",
-          choices: fs
-            .readdirSync(path.join(__dirname, "../../templates"))
-            .filter((d) =>
-              fs
-                .statSync(path.join(__dirname, "../../templates", d))
-                .isDirectory()
-            ),
-        },
-        { type: "input", name: "name", message: "Enter project name:" },
-      ]);
-      await program.parseAsync([
-        "node",
-        "bin/tools/orb",
-        "create",
-        answers.category,
-        answers.template,
-        answers.name,
-      ]);
-    } else if (choice === "Manage projects") {
-      console.log("Manage projects not yet implemented");
-    } else if (choice === "Manage monorepo") {
-      const { action } = await inquirer.prompt({
+    while (true) {
+      // Build main menu choices dynamically
+      const baseDirs = ["libs", "services", "clients"];
+      let hasProjects = false;
+      for (const dir of baseDirs) {
+        const dirPath = path.join(__dirname, "../../", dir);
+        if (!fs.existsSync(dirPath)) continue;
+        for (const entry of fs.readdirSync(dirPath)) {
+          const projPath = path.join(dirPath, entry);
+          if (
+            fs.statSync(projPath).isDirectory() &&
+            fs.existsSync(path.join(projPath, "package.json"))
+          ) {
+            hasProjects = true;
+            break;
+          }
+        }
+        if (hasProjects) break;
+      }
+      const mainChoices = ["Create project"];
+      if (hasProjects) mainChoices.push("Manage projects");
+      mainChoices.push("Manage monorepo", "Exit");
+      const { choice } = await inquirer.prompt({
         type: "list",
-        name: "action",
-        message: "Select action:",
-        choices: [
-          "Install template remote",
-          "Update from template",
-          "Run monorepo tests",
-        ],
+        name: "choice",
+        message: "Select an option:",
+        choices: mainChoices,
       });
-      if (action === "Install template remote")
-        run("node bin/tools/orb monorepo install");
-      else if (action === "Update from template")
-        run("node bin/tools/orb monorepo update");
-      else if (action === "Run monorepo tests")
-        run("node bin/tools/orb monorepo test");
-    } else {
-      process.exit(0);
+
+      if (choice === "Create project") {
+        const answers = await inquirer.prompt([
+          {
+            type: "list",
+            name: "category",
+            message: "Select category:",
+            choices: ["library", "service", "client"],
+          },
+          {
+            type: "list",
+            name: "template",
+            message: "Select template:",
+            choices: fs
+              .readdirSync(path.join(__dirname, "../../templates"))
+              .filter((d) =>
+                fs
+                  .statSync(path.join(__dirname, "../../templates", d))
+                  .isDirectory()
+              ),
+          },
+          { type: "input", name: "name", message: "Enter project name:" },
+        ]);
+        await program.parseAsync([
+          "node",
+          "bin/tools/orb",
+          "create",
+          answers.category,
+          answers.template,
+          answers.name,
+        ]);
+      } else if (choice === "Manage projects") {
+        // List all projects under libs, services, clients by package.json name
+        const baseDirs = ["libs", "services", "clients"];
+        const projects = [];
+        for (const dir of baseDirs) {
+          const dirPath = path.join(__dirname, "../../", dir);
+          if (!fs.existsSync(dirPath)) continue;
+          for (const entry of fs.readdirSync(dirPath)) {
+            const projPath = path.join(dirPath, entry);
+            if (fs.statSync(projPath).isDirectory()) {
+              const pkgPath = path.join(projPath, "package.json");
+              if (fs.existsSync(pkgPath)) {
+                const { name: pkgName } = JSON.parse(
+                  fs.readFileSync(pkgPath, "utf8")
+                );
+                projects.push({ name: pkgName, path: projPath });
+              }
+            }
+          }
+        }
+        const choices = projects
+          .map((p) => p.name)
+          .concat(new inquirer.Separator(), "Go back");
+        const { projectName } = await inquirer.prompt({
+          type: "list",
+          name: "projectName",
+          message: "Select project:",
+          choices,
+        });
+        if (projectName === "Go back") continue;
+        const project = projects.find((p) => p.name === projectName);
+        const envPath = path.join(project.path, ".env.template");
+        if (!fs.existsSync(envPath)) fs.writeFileSync(envPath, "");
+        const envContent = fs.readFileSync(envPath, "utf8").split(/\r?\n/);
+        const { key, value } = await inquirer.prompt([
+          {
+            type: "input",
+            name: "key",
+            message: "Enter environment variable name:",
+          },
+          { type: "input", name: "value", message: "Enter value:" },
+        ]);
+        const idx = envContent.findIndex((line) => line.startsWith(`${key}=`));
+        if (idx >= 0) envContent[idx] = `${key}=${value}`;
+        else envContent.push(`${key}=${value}`);
+        fs.writeFileSync(envPath, envContent.join("\n"));
+        console.log(`Updated ${key} in ${envPath}`);
+      } else if (choice === "Manage monorepo") {
+        const { action } = await inquirer.prompt({
+          type: "list",
+          name: "action",
+          message: "Select action:",
+          choices: [
+            "Install template remote",
+            "Update from template",
+            "Run monorepo tests",
+            "Go back",
+          ],
+        });
+        if (action === "Install template remote")
+          run("node bin/tools/orb monorepo install");
+        else if (action === "Update from template")
+          run("node bin/tools/orb monorepo update");
+        else if (action === "Run monorepo tests")
+          run("node bin/tools/orb monorepo test");
+        else if (action === "Go back") continue;
+      } else {
+        process.exit(0);
+      }
     }
   });
 

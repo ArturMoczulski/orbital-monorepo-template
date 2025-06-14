@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "workspaces": [
+    ".",
     "libs/**",
     "!libs/orbital/template",
     "services/**",
@@ -17,7 +18,7 @@
     "test": "turbo run test",
     "test:monorepo-template": "jest --config jest.config.cjs",
     "lint": "turbo run lint",
-    "orb": "node bin/tools/orb",
+    "orb": "yarn node bin/tools/orb",
     "start:dev": "dotenv-flow -e development -- turbo run dev",
     "start:staging": "dotenv-flow -e staging -- turbo run dev",
     "start:prod": "dotenv-flow -e production -- turbo run dev"
