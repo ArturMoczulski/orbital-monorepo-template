@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -e
 
 echo "Interactive Orbital CLI"
@@ -13,20 +12,32 @@ select opt in "${options[@]}"; do
       select type in "${types[@]}"; do
         if [[ " ${types[*]} " == *" $type "* ]]; then
           read -p "Enter new project name (kebab-case): " project
-          template_dir=""
+          # Determine template and destination directories
           case $type in
-            "library") template_dir="libs/orbital/template" ;;
-            "service") template_dir="services/orbital/template" ;;
-            "client") template_dir="clients/orbital/template" ;;
+            "library")
+              template_dir="libs/orbital/template"
+              dest_base="libs/orbital"
+              ;;
+            "service")
+              template_dir="services/orbital/template"
+              dest_base="services/orbital"
+              ;;
+            "client")
+              template_dir="clients/orbital/template"
+              dest_base="clients/orbital"
+              ;;
           esac
-          dest_dir="$type/$project"
+          dest_dir="$dest_base/$project"
           if [[ -d "$dest_dir" ]]; then
             echo "Directory $dest_dir already exists!"
             exit 1
           fi
-          cp -R "$template_dir" "$dest_dir"
+          mkdir -p "$dest_dir"
+          # Copy files using rsync, excluding patterns from template's .gitignore
+          rsync -av --exclude-from="$template_dir/.gitignore" "$template_dir"/ "$dest_dir"/
+          # Update package.json name
           (cd "$dest_dir" && jq ".name = \"@orbital/$project\"" package.json > package.tmp.json && mv package.tmp.json package.json)
-          echo "Generated $type $project from template."
+          echo "Generated $type $project from template at $dest_dir."
           break
         else
           echo "Invalid selection."
