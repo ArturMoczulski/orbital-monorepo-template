@@ -1,231 +1,159 @@
-#!/usr/bin/env bash
-set -e
+#!/usr/bin/env node
+import { program } from "commander";
+import inquirer from "inquirer";
+import { execSync } from "child_process";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-# Print ASCII art and version
-version=$(jq -r .version package.json)
-cat << 'EOF'
-  ____   ____  ____
- / __ \ / __ \| __ \
-| |  | | |  | |  _ \
-| |  | | |  | | |_) |
-| |__| | |__| |____/
- \____/ \____/|_____/
-EOF
-printf "\033[32mVersion: %s\033[0m\n\n" "$version"
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-# Create project from template
-create_project() {
-  local category template package_name dest_base template_dir dest_dir owner pkg initial_pkg test_dir
-  # Category and template selection from args or interactive
-  if [ -n "$1" ] && [ -n "$2" ]; then
-    category="$1"; template="$2"; initial_pkg="$3"
-  else
-    PS3="Select category: "
-    categories=("library" "service" "client")
-    select category in "${categories[@]}"; do
-      [[ " ${categories[*]} " == *" $category "* ]] && break
-      echo "Invalid selection."
-    done
-
-    # List available templates
-    templates=()
-    for d in templates/*; do
-      [ -d "$d" ] && templates+=("$(basename "$d")")
-    done
-    PS3="Select template to use: "
-    select template in "${templates[@]}"; do
-      [[ " ${templates[*]} " == *" $template "* ]] && break
-      echo "Invalid selection."
-    done
-
-  fi
-
-  case "$category" in
-    library)  dest_base="libs";    ;;
-    service)  dest_base="services";;
-    client)   dest_base="clients";  ;;
-    *) echo "Invalid category: $category"; exit 1 ;;
-  esac
-
-  # Prompt for project name until an unused path is provided
-  while true; do
-    if [ -n "$initial_pkg" ]; then
-      package_name="$initial_pkg"; initial_pkg=""
-    else
-      read -p "Enter project name (scoped @owner/name or unscoped): " package_name
-    fi
-    if [[ "$package_name" =~ ^@([^/]+)/(.+)$ ]]; then
-      owner="${BASH_REMATCH[1]}"; pkg="${BASH_REMATCH[2]}"
-      test_dir="$dest_base/$owner/$pkg"
-    else
-      pkg="$package_name"; test_dir="$dest_base/$pkg"
-    fi
-
-    if [ -d "$test_dir" ]; then
-      echo "Project name taken: $package_name (path $test_dir exists). Please choose another."
-    else
-      dest_dir="$test_dir"
-      break
-    fi
-  done
-
-  template_dir="templates/$template"
-  [ -d "$template_dir" ] || { echo "Template not found: $template_dir"; exit 1; }
-
-
-  if [ -d "$dest_dir" ]; then
-    echo "Project directory exists: $dest_dir"; exit 1
-  fi
-
-  mkdir -p "$dest_dir"
-  exclude_opt=""
-  [ -f "$template_dir/.gitignore" ] && exclude_opt="--exclude-from=$template_dir/.gitignore"
-  rsync -av $exclude_opt "$template_dir"/ "$dest_dir"/
-
-  # Update package.json name
-  (cd "$dest_dir" && jq ".name = \"$package_name\"" package.json > tmp.$$.json && mv tmp.$$.json package.json)
-
-  echo "Created project $package_name in $dest_dir"
-  exit 0
+// Default to interactive "manage" if no command provided
+if (process.argv.length <= 2) {
+  process.argv.push("manage");
+}
+function run(cmd, opts = {}) {
+  execSync(cmd, { stdio: "inherit", ...opts });
 }
 
-# Add or update environment variables in .env.template
-manage_env_vars() {
-  local project_dir="$1" pkg="$2" varname value slug prefix env_file
-  read -p "Enter environment variable name: " varname
-  read -p "Enter default value: " value
-  slug="${pkg//@/}"; slug="${slug//\//_}"
-  prefix=$(printf "%s_%s" "$slug" "$varname" | tr '[:lower:]' '[:upper:]')
-  env_file="$project_dir/.env.template"
-  touch "$env_file"
-  sed -i.bak "\|^${prefix}=|d" "$env_file" && rm "${env_file}.bak"
-  echo "${prefix}=${value}" >> "$env_file"
-  echo "Added ${prefix} to ${env_file}"
-  exit 0
-}
+program.version(
+  JSON.parse(
+    fs.readFileSync(path.join(__dirname, "../../package.json"), "utf8")
+  ).version
+);
 
-# Manage projects menu
-manage_projects() {
-  local dirs=() names=() pkg project_dir action
-  for base in libs/orbital services/orbital clients/orbital; do
-    for d in "$base"/*; do
-      [ -f "$d/package.json" ] || continue
-      [ "$(basename "$d")" != "template" ] || continue
-      pkg=$(jq -r .name "$d/package.json")
-      dirs+=("$d"); names+=("$pkg")
-    done
-  done
+// Monorepo commands
+const monorepoCmd = program
+  .command("monorepo")
+  .description("Manage monorepo commands");
 
-  [ "${#names[@]}" -gt 0 ] || { echo "No projects found."; exit 1; }
+monorepoCmd
+  .command("install")
+  .description("Install the monorepo-template remote")
+  .action(() => {
+    const remote = "monorepo-template";
+    const url = "git@github.com:ArturMoczulski/orbital-monorepo-template.git";
+    try {
+      run(`git remote add ${remote} ${url}`);
+      console.log(`Added ${remote} remote pointing to ${url}`);
+    } catch {
+      run(`git remote set-url ${remote} ${url}`);
+      console.log(`Updated ${remote} remote to ${url}`);
+    }
+  });
 
-  PS3="Select project: "
-  select pkg in "${names[@]}"; do
-    [ -n "$pkg" ] && project_dir="${dirs[$((REPLY-1))]}" && break
-    echo "Invalid selection."
-  done
+monorepoCmd
+  .command("update")
+  .description("Update from monorepo-template remote")
+  .action(() => {
+    run("git fetch monorepo-template main");
+    run("git merge monorepo-template/main");
+    console.log("Monorepo updated from monorepo-template/main");
+  });
 
-  PS3="Select action: "
-  actions=("Manage environment variables" "Go back")
-  select action in "${actions[@]}"; do
-    case "$action" in
-      "Manage environment variables") manage_env_vars "$project_dir" "$pkg" ;;
-      "Go back") break ;;
-      *) echo "Invalid selection." ;;
-    esac
-  done
-}
- 
-# Manage monorepo menu
-manage_monorepo() {
-  echo "Manage Monorepo"
-  PS3="Select action: "
-  actions=("Install template remote" "Update from template" "Go back")
-  select action in "${actions[@]}"; do
-    case "$action" in
-      "Install template remote") install_monorepo_template ;;
-      "Update from template") update_monorepo_template ;;
-      "Go back") return ;;
-      *) echo "Invalid selection." ;;
-    esac
-  done
-}
- 
-# Install monorepo template remote
-install_monorepo_template() {
-  local remote="monorepo-template"
-  local url="git@github.com:ArturMoczulski/orbital-monorepo-template.git"
-  if git remote | grep -q "$remote"; then
-    git remote set-url "$remote" "$url" && echo "Updated $remote remote to $url"
-  else
-    git remote add "$remote" "$url" && echo "Added $remote remote pointing to $url"
-  fi
-  exit 0
-}
- 
-# Update monorepo from template remote
-update_monorepo_template() {
-  echo "Fetching latest from monorepo-template remote..."
-  git fetch monorepo-template main || { echo "Failed to fetch from monorepo-template"; exit 1; }
-  echo "Merging monorepo-template/main into current branch..."
-  git merge monorepo-template/main || { echo "Merge failed. Please resolve conflicts."; exit 1; }
-  echo "Monorepo updated from monorepo-template/main"
-  exit 0
-}
+monorepoCmd
+  .command("test")
+  .description("Run monorepo-template integration tests")
+  .action(() => {
+    run("jest --config jest.config.cjs");
+  });
 
-# Support help command: orb help | --help
+// Create project from template
+program
+  .command("create <category> <template> <name>")
+  .description("Create a new project from a template")
+  .action((category, template, name) => {
+    const bases = { library: "libs", service: "services", client: "clients" };
+    const destBase = bases[category];
+    if (!destBase) {
+      console.error(`Invalid category: ${category}`);
+      process.exit(1);
+    }
+    const templateDir = path.join(__dirname, "../../templates", template);
+    if (!fs.existsSync(templateDir)) {
+      console.error(`Template not found: ${template}`);
+      process.exit(1);
+    }
+    const parts = name.match(/^@([^/]+)\/(.+)$/);
+    const destDir = parts
+      ? path.join(destBase, parts[1], parts[2])
+      : path.join(destBase, name);
+    if (fs.existsSync(destDir)) {
+      console.error(`Project directory exists: ${destDir}`);
+      process.exit(1);
+    }
+    fs.mkdirSync(destDir, { recursive: true });
+    fs.cpSync(templateDir, destDir, { recursive: true });
+    const pkgFile = path.join(destDir, "package.json");
+    const pkg = JSON.parse(fs.readFileSync(pkgFile, "utf8"));
+    pkg.name = name;
+    fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2));
+    console.log(`Created project ${name} in ${destDir}`);
+  });
 
-# Support non-interactive monorepo update: orb monorepo update
-if [ "$1" = "monorepo" ] && [ "$2" = "update" ]; then
-  update_monorepo_template
-fi
+// Interactive CLI
+program
+  .command("manage")
+  .description("Launch interactive CLI")
+  .action(async () => {
+    const { choice } = await inquirer.prompt({
+      type: "list",
+      name: "choice",
+      message: "Select an option:",
+      choices: ["Create project", "Manage projects", "Manage monorepo", "Exit"],
+    });
+    if (choice === "Create project") {
+      const answers = await inquirer.prompt([
+        {
+          type: "list",
+          name: "category",
+          message: "Select category:",
+          choices: ["library", "service", "client"],
+        },
+        {
+          type: "list",
+          name: "template",
+          message: "Select template:",
+          choices: fs
+            .readdirSync(path.join(__dirname, "../../templates"))
+            .filter((d) =>
+              fs
+                .statSync(path.join(__dirname, "../../templates", d))
+                .isDirectory()
+            ),
+        },
+        { type: "input", name: "name", message: "Enter project name:" },
+      ]);
+      await program.parseAsync([
+        "node",
+        "bin/tools/orb",
+        "create",
+        answers.category,
+        answers.template,
+        answers.name,
+      ]);
+    } else if (choice === "Manage projects") {
+      console.log("Manage projects not yet implemented");
+    } else if (choice === "Manage monorepo") {
+      const { action } = await inquirer.prompt({
+        type: "list",
+        name: "action",
+        message: "Select action:",
+        choices: [
+          "Install template remote",
+          "Update from template",
+          "Run monorepo tests",
+        ],
+      });
+      if (action === "Install template remote")
+        run("node bin/tools/orb monorepo install");
+      else if (action === "Update from template")
+        run("node bin/tools/orb monorepo update");
+      else if (action === "Run monorepo tests")
+        run("node bin/tools/orb monorepo test");
+    } else {
+      process.exit(0);
+    }
+  });
 
-# Support non-interactive monorepo install: orb monorepo install
-if [ "$1" = "monorepo" ] && [ "$2" = "install" ]; then
-  install_monorepo_template
-fi
-if [ "$1" = "help" ] || [ "$1" = "--help" ]; then
-  cat <<EOF
-Usage: orb [command] [options]
-
-Commands:
-  create|generate <library|service|client> <template> <project-name>   Create a new project from a template.
-  manage                                                           Manage existing projects and environment variables.
-  monorepo install                                                 Install the 'monorepo-template' remote for this repo.
-  monorepo update                                                  Update the monorepo by merging from monorepo-template remote.
-  help                                                             Show this help message.
-
-Examples:
-  yarn orb generate library ts-lib my-new-lib
-  yarn orb create service nestjs my-service
-  yarn orb monorepo install
-  yarn orb monorepo update
-EOF
-  exit 0
-fi
-
-# Support non-interactive create/generate: orb create|generate <category> <template> <package_name>
-if { [ "$1" = "create" ] || [ "$1" = "generate" ]; } && [ $# -eq 4 ]; then
-  create_project "$2" "$3" "$4"
-fi
-
-# Remove support for direct update; use monorepo update instead
-
-
-# Interactive CLI
-interactive_cli() {
-  while true; do
-    echo "Interactive Orbital CLI"
-    PS3="Select an option: "
-    options=("Create project" "Manage projects" "Manage monorepo" "Exit")
-    select opt in "${options[@]}"; do
-      case "$opt" in
-        "Create project")   create_project; break ;;
-        "Manage projects")  manage_projects; break ;;
-        "Manage monorepo")  manage_monorepo; break ;;
-        "Exit")             echo "Goodbye!"; exit 0 ;;
-        *)                  echo "Invalid option." ;;
-      esac
-    done
-  done
-}
-interactive_cli
+program.parse(process.argv);

@@ -2,6 +2,7 @@
   "name": "orbital",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "workspaces": [
     "libs/**",
     "!libs/orbital/template",
@@ -14,8 +15,9 @@
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
+    "test:monorepo-template": "jest --config jest.config.cjs",
     "lint": "turbo run lint",
-    "orb": "bash bin/tools/orb",
+    "orb": "node bin/tools/orb",
     "start:dev": "dotenv-flow -e development -- turbo run dev",
     "start:staging": "dotenv-flow -e staging -- turbo run dev",
     "start:prod": "dotenv-flow -e production -- turbo run dev"
@@ -23,8 +25,14 @@
   "devDependencies": {
     "dotenv-flow": "^4.1.0",
     "dotenv-flow-cli": "^1.1.1",
+    "execa": "^9.6.0",
+    "jest": "^30.0.0",
     "rimraf": "^6.0.1",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "inquirer": "^12.6.3"
   }
 }
