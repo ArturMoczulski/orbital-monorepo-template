@@ -134,6 +134,16 @@ manage_projects() {
     esac
   done
 }
+ 
+# Update monorepo from template remote
+update_monorepo_template() {
+  echo "Fetching latest from monorepo-template remote..."
+  git fetch monorepo-template main || { echo "Failed to fetch from monorepo-template"; exit 1; }
+  echo "Merging monorepo-template/main into current branch..."
+  git merge monorepo-template/main || { echo "Merge failed. Please resolve conflicts."; exit 1; }
+  echo "Monorepo updated from monorepo-template/main"
+  exit 0
+}
 
 # Support help command: orb help | --help
 if [ "$1" = "help" ] || [ "$1" = "--help" ]; then
@@ -143,11 +153,13 @@ Usage: orb [command] [options]
 Commands:
   create|generate <library|service|client> <template> <project-name>   Create a new project from a template.
   manage                                                           Manage existing projects and environment variables.
+  update                                                           Update the monorepo by merging from monorepo-template remote.
   help                                                             Show this help message.
 
 Examples:
   yarn orb generate library ts-lib my-new-lib
   yarn orb create service nestjs my-service
+  yarn orb update
 EOF
   exit 0
 fi
@@ -157,14 +169,20 @@ if { [ "$1" = "create" ] || [ "$1" = "generate" ]; } && [ $# -eq 4 ]; then
   create_project "$2" "$3" "$4"
 fi
 
+# Support non-interactive update: orb update
+if [ "$1" = "update" ]; then
+  update_monorepo_template
+fi
+
 # Interactive CLI
 echo "Interactive Orbital CLI"
 PS3="Select an option: "
-options=("Create project" "Manage projects" "Exit")
+options=("Create project" "Manage projects" "Update from template" "Exit")
 select opt in "${options[@]}"; do
   case "$opt" in
     "Create project")   create_project ;;
     "Manage projects")  manage_projects ;;
+    "Update from template") update_monorepo_template ;;
     "Exit")             echo "Goodbye!"; exit 0 ;;
     *)                  echo "Invalid option." ;;
   esac
