@@ -32,6 +32,7 @@ const RAW_RUNTIME_STATE =
           ["dotenv-flow", "npm:4.1.0"],\
           ["dotenv-flow-cli", "npm:1.1.1"],\
           ["execa", "npm:9.6.0"],\
+          ["figlet", "npm:1.8.1"],\
           ["inquirer", "virtual:787321c6166cc91976cf47d93f312bb4b5394feb9a8edd18ad8d1b2b600b9dad664d2fbfcb07ac7bd5344c40a36aeffcc5b5c35b61ed9ae3f97f43ad5a3b0f3f#npm:12.6.3"],\
           ["jest", "virtual:787321c6166cc91976cf47d93f312bb4b5394feb9a8edd18ad8d1b2b600b9dad664d2fbfcb07ac7bd5344c40a36aeffcc5b5c35b61ed9ae3f97f43ad5a3b0f3f#npm:30.0.0"],\
           ["orbital", "workspace:."],\
@@ -2895,6 +2896,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["figlet", [\
+      ["npm:1.8.1", {\
+        "packageLocation": "../../.yarn/berry/cache/figlet-npm-1.8.1-2d9f84c67a-10c0.zip/node_modules/figlet/",\
+        "packageDependencies": [\
+          ["figlet", "npm:1.8.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["figures", [\
       ["npm:6.1.0", {\
         "packageLocation": "../../.yarn/berry/cache/figures-npm-6.1.0-af5576db56-10c0.zip/node_modules/figures/",\
@@ -4376,6 +4386,7 @@ const RAW_RUNTIME_STATE =
           ["dotenv-flow", "npm:4.1.0"],\
           ["dotenv-flow-cli", "npm:1.1.1"],\
           ["execa", "npm:9.6.0"],\
+          ["figlet", "npm:1.8.1"],\
           ["inquirer", "virtual:787321c6166cc91976cf47d93f312bb4b5394feb9a8edd18ad8d1b2b600b9dad664d2fbfcb07ac7bd5344c40a36aeffcc5b5c35b61ed9ae3f97f43ad5a3b0f3f#npm:12.6.3"],\
           ["jest", "virtual:787321c6166cc91976cf47d93f312bb4b5394feb9a8edd18ad8d1b2b600b9dad664d2fbfcb07ac7bd5344c40a36aeffcc5b5c35b61ed9ae3f97f43ad5a3b0f3f#npm:30.0.0"],\
           ["orbital", "workspace:."],\

@@ -2006,6 +2006,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"figlet@npm:^1.6.0":
+  version: 1.8.1
+  resolution: "figlet@npm:1.8.1"
+  bin:
+    figlet: bin/index.js
+  checksum: 10c0/20a9023ee316b2cbbeb9ba94c9adfdb9fc1bd150efec0ddd3492c23a03e3311ac77fb1a65cfa14e3bf4eca250ddcf98ca380871222cb9909bd50071b3602e8da
+  languageName: node
+  linkType: hard
+
 "figures@npm:^6.1.0":
   version: 6.1.0
   resolution: "figures@npm:6.1.0"
@@ -3309,6 +3318,7 @@ __metadata:
     dotenv-flow: "npm:^4.1.0"
     dotenv-flow-cli: "npm:^1.1.1"
     execa: "npm:^9.6.0"
+    figlet: "npm:^1.6.0"
     inquirer: "npm:^12.6.3"
     jest: "npm:^30.0.0"
     rimraf: "npm:^6.0.1"

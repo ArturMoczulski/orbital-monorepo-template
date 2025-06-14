@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "commander": "^14.0.0",
+    "figlet": "^1.6.0",
     "inquirer": "^12.6.3"
   }
 }

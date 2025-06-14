@@ -4,9 +4,11 @@ import inquirer from "inquirer";
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
+import figlet from "figlet";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+console.log(figlet.textSync("orb"));
 
 // Default to interactive "manage" if no command provided
 if (process.argv.length <= 2) {
