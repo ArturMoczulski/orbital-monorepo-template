@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const cli = "node";
-const orbScript = path.resolve(__dirname, "../orb");
+const orbScript = path.resolve(__dirname, "orb");
 
 describe("orb CLI monorepo commands", () => {
   const tmpRepo = path.join(__dirname, "tmp-repo");
@@ -13,9 +13,31 @@ describe("orb CLI monorepo commands", () => {
     fs.mkdirSync(tmpRepo);
     execSync(`git clone --depth=1 ${process.cwd()} ${tmpRepo}`);
   });
+  beforeEach(() => {
+    // reset monorepo remote before each test to avoid duplication errors
+    try {
+      execSync(`git remote remove monorepo-template`, {
+        cwd: tmpRepo,
+        stdio: "ignore",
+      });
+    } catch {}
+  });
 
   afterAll(() => {
+    // clean up remote and temporary repos
+    try {
+      execSync(`git remote remove monorepo-template`, {
+        cwd: tmpRepo,
+        stdio: "ignore",
+      });
+    } catch {}
     fs.rmSync(tmpRepo, { recursive: true });
+    const tmpRemoteBare = path.join(__dirname, "tmp-remote.git");
+    const tmpRemoteClone = path.join(__dirname, "tmp-remote-clone");
+    if (fs.existsSync(tmpRemoteBare))
+      fs.rmSync(tmpRemoteBare, { recursive: true });
+    if (fs.existsSync(tmpRemoteClone))
+      fs.rmSync(tmpRemoteClone, { recursive: true });
   });
 
   test("monorepo install sets or updates remote", () => {
@@ -36,12 +58,20 @@ describe("orb CLI monorepo commands", () => {
     });
     expect(stdout.toString()).toMatch(/Monorepo updated/);
   });
+
   test("monorepo update merges new upstream commits", () => {
     const tmpRemoteBare = path.join(__dirname, "tmp-remote.git");
     if (fs.existsSync(tmpRemoteBare))
       fs.rmSync(tmpRemoteBare, { recursive: true });
     execSync(`git clone --bare ${process.cwd()} ${tmpRemoteBare}`);
-    execSync(`git remote remove monorepo-template`, { cwd: tmpRepo });
+    try {
+      try {
+        execSync(`git remote remove monorepo-template`, {
+          cwd: tmpRepo,
+          stdio: "ignore",
+        });
+      } catch {}
+    } catch {}
     execSync(`git remote add monorepo-template file://${tmpRemoteBare}`, {
       cwd: tmpRepo,
     });

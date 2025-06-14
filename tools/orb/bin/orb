@@ -21,7 +21,7 @@ function run(cmd, opts = {}) {
 
 program.version(
   JSON.parse(
-    fs.readFileSync(path.join(__dirname, "../../package.json"), "utf8")
+    fs.readFileSync(path.join(__dirname, "../../../package.json"), "utf8")
   ).version
 );
 
@@ -36,21 +36,28 @@ monorepoCmd
   .action(() => {
     const remote = "monorepo-template";
     const url = "git@github.com:ArturMoczulski/orbital-monorepo-template.git";
+    // ensure no duplicate remote
     try {
-      run(`git remote add ${remote} ${url}`);
-      console.log(`Added ${remote} remote pointing to ${url}`);
-    } catch {
-      run(`git remote set-url ${remote} ${url}`);
-      console.log(`Updated ${remote} remote to ${url}`);
-    }
+      run(`git remote remove ${remote}`, { stdio: "ignore" });
+    } catch {}
+    // add remote fresh
+    run(`git remote add ${remote} ${url}`);
+    console.log(`Added ${remote} remote pointing to ${url}`);
   });
 
 monorepoCmd
   .command("update")
   .description("Update from monorepo-template remote")
   .action(() => {
-    run("git fetch monorepo-template main");
-    run("git merge monorepo-template/main");
+    const remote = "monorepo-template";
+    // ensure remote exists without printing errors if missing
+    try {
+      run(`git remote get-url ${remote}`, { stdio: "ignore" });
+    } catch {
+      run(`git remote add ${remote} ${url}`);
+    }
+    run(`git fetch ${remote} main`);
+    run(`git merge ${remote}/main`);
     console.log("Monorepo updated from monorepo-template/main");
   });
 
