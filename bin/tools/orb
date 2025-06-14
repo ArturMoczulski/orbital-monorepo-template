@@ -142,7 +142,7 @@ manage_monorepo() {
   select action in "${actions[@]}"; do
     case "$action" in
       "Update from template") update_monorepo_template ;;
-      "Go back") break ;;
+      "Go back") return ;;
       *) echo "Invalid selection." ;;
     esac
   done
