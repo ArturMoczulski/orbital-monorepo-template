@@ -1,23 +1,30 @@
-/** Jest configuration for @orbital/core */
+/** Jest configuration for template packages */
+const base = require("./jest.config.base");
+const { name: pkg } = require("./package.json");
+
 module.exports = {
-  preset: "ts-jest",
-  testEnvironment: "node",
-  moduleFileExtensions: ["ts", "js", "json", "node"],
-  passWithNoTests: true,
   projects: [
     {
-      displayName: "unit",
+      ...base,
+      displayName: `${pkg}:unit`,
       roots: ["<rootDir>/src", "<rootDir>/tests/unit"],
+      setupFilesAfterEnv: ["<rootDir>/tests/unit/jest.setup.unit.js"],
       testMatch: ["**/tests/unit/**/*.spec.ts"],
     },
     {
-      displayName: "integration",
+      ...base,
+      displayName: `${pkg}:integration`,
       roots: ["<rootDir>/src", "<rootDir>/tests/integration"],
+      setupFilesAfterEnv: [
+        "<rootDir>/tests/integration/jest.setup.integration.js",
+      ],
       testMatch: ["**/tests/integration/**/*.spec.ts"],
     },
     {
-      displayName: "e2e",
+      ...base,
+      displayName: `${pkg}:e2e`,
       roots: ["<rootDir>/src", "<rootDir>/tests/e2e"],
+      setupFilesAfterEnv: ["<rootDir>/tests/e2e/jest.setup.e2e.js"],
       testMatch: ["**/tests/e2e/**/*.spec.ts"],
     },
   ],
