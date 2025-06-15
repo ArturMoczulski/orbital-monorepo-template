@@ -8,6 +8,7 @@ This repository contains a **living template** for a full-stack monorepo powered
 - [Getting Started](#getting-started)
 - [Yarn Scripts](#yarn-scripts)
 - [CLI Usage](#cli-usage)
+- [Commands](#commands)
 - [Environment Variables](#environment-variables)
 - [Package Templates](#package-templates)
 - [Contributing](#contributing)
@@ -107,4 +108,7 @@ Located in the `templates/` directory:
 
 ## License
 
+## Commands
+
+Detailed usage of Orb CLI and Yarn scripts is available in [commands.md](commands.md).
 MIT
