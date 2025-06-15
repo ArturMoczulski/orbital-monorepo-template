@@ -50,6 +50,7 @@ monorepoCmd
   .description("Update from monorepo-template remote")
   .action(() => {
     const remote = "monorepo-template";
+    const url = "git@github.com:ArturMoczulski/orbital-monorepo-template.git";
     // ensure remote exists without printing errors if missing
     try {
       run(`git remote get-url ${remote}`, { stdio: "ignore" });

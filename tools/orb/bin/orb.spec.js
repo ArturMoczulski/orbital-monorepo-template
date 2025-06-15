@@ -96,4 +96,22 @@ describe("orb CLI monorepo commands", () => {
     );
     expect(readmeContent).toMatch(/UPSTREAM CHANGE/);
   });
+  // test that monorepo update preserves custom package name and version
+  test("monorepo update preserves package name and version", () => {
+    const pkgPath = path.join(tmpRepo, "package.json");
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    const customName = "my-custom-app";
+    const customVersion = "2.0.0";
+    pkg.name = customName;
+    pkg.version = customVersion;
+    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
+    const stdout = execSync(`${cli} ${orbScript} monorepo update`, {
+      cwd: tmpRepo,
+      encoding: "utf8",
+    });
+    expect(stdout.toString()).toMatch(/Monorepo updated/);
+    const updatedPkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    expect(updatedPkg.name).toBe(customName);
+    expect(updatedPkg.version).toBe(customVersion);
+  });
 });
