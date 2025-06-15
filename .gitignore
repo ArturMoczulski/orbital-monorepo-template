@@ -1,7 +1,9 @@
 # Ignore temporary test repositories used by orb CLI tests
-/bin/tools/spec/tmp-repo/
-/bin/tools/spec/tmp-remote.git/
-/bin/tools/spec/tmp-remote-clone/
+/tools/orb/bin/tmp-repo/
+/tools/orb/bin/tmp-remote.git/
+/tools/orb/bin/tmp-remote-clone/
+/tools/orb/bin/tmp-conflict-remote.git/
+/tools/orb/bin/tmp-conflict-remote-clone/
 # Yarn PnP and cache artifacts
 .pnp.cjs
 .yarn/install-state.gz
