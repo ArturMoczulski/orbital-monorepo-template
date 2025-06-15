@@ -149,10 +149,10 @@ program
             name: "template",
             message: "Select template:",
             choices: fs
-              .readdirSync(path.join(__dirname, "../../templates"))
+              .readdirSync(path.join(__dirname, "../../../templates"))
               .filter((d) =>
                 fs
-                  .statSync(path.join(__dirname, "../../templates", d))
+                  .statSync(path.join(__dirname, "../../../templates", d))
                   .isDirectory()
               ),
           },
@@ -160,7 +160,7 @@ program
         ]);
         await program.parseAsync([
           "node",
-          "bin/tools/orb",
+          path.join(__dirname, "orb"),
           "create",
           answers.category,
           answers.template,
