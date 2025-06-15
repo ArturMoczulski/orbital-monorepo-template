@@ -100,6 +100,8 @@ program
     pkg.name = name;
     fs.writeFileSync(pkgFile, JSON.stringify(pkg, null, 2));
     console.log(`Created project ${name} in ${destDir}`);
+    run("yarn install");
+    console.log(`Project ${name} created and dependencies installed.`);
   });
 
 // Interactive CLI
@@ -166,6 +168,11 @@ program
           answers.template,
           answers.name,
         ]);
+        // After project creation, install dependencies at monorepo root
+        run("yarn install", { cwd: path.join(__dirname, "../../..") });
+        console.log(
+          `Project ${answers.name} created and dependencies installed.`
+        );
       } else if (choice === "Manage projects") {
         // List all projects under libs, services, clients by package.json name
         const baseDirs = ["libs", "services", "clients"];
