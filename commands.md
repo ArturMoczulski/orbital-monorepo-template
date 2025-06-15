@@ -14,7 +14,8 @@ Orbital Monorepo Template.
 - **lint**: `yarn lint`  
   Runs `turbo run lint` to lint all workspaces.
 
-- **orb**: `yarn orb <command>`  
+- **orb**: `yarn orb <command>`
+- **plop**: `yarn plop`
   Launches the custom CLI (Orb) for scaffolding and managing projects.
 
 ## Orb CLI Commands (via `yarn orb`)
@@ -35,16 +36,23 @@ The Orb CLI offers the following commands:
 
 **Project scaffolding**
 
-- `yarn orb create <category> <template> <name>`  
-   Creates a new project from a template.
+- `yarn orb create <category> <template> <name>`
+  Creates a new project from a template.
+
   - `category`: `library`, `service`, or `client`.
   - `template`: e.g., `ts-lib`, `nestjs`, `client`.
-  - `name`: Package name (scoped names allowed, e.g., `@org/pkg`).  
+  - `name`: Package name (scoped names allowed, e.g., `@org/pkg`).
     Example:
 
-```bash
-yarn orb create library ts-lib @myorg/utils
-```
+  ```bash
+  yarn orb create library ts-lib @myorg/utils
+  ```
+
+- `yarn orb add-profile <projectName> [profiles...]`
+  Apply one or more plop-based profiles to an existing project non-interactively.
+
+- `yarn orb profile create <profileName>`
+  Scaffold a new plop-based profile non-interactively.
 
 **Interactive management**
 

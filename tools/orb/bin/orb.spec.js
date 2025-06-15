@@ -114,4 +114,27 @@ describe("orb CLI monorepo commands", () => {
     expect(updatedPkg.name).toBe(customName);
     expect(updatedPkg.version).toBe(customVersion);
   });
+  // Non-interactive create commands
+  test("create library scaffolds a new TypeScript library", () => {
+    execSync(`${cli} ${orbScript} create library ts-lib my-lib`, {
+      cwd: tmpRepo,
+    });
+    const pkgPath = path.join(tmpRepo, "libs", "my-lib", "package.json");
+    expect(fs.existsSync(pkgPath)).toBe(true);
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+    expect(pkg.name).toBe("@orbital/my-lib");
+  });
+
+  test("profile create scaffolds a new profile", () => {
+    execSync(`${cli} ${orbScript} profile create testprofile`, {
+      cwd: tmpRepo,
+    });
+    const profilePath = path.join(
+      tmpRepo,
+      "profiles",
+      "testprofile",
+      "plopfile.cjs"
+    );
+    expect(fs.existsSync(profilePath)).toBe(true);
+  });
 });
