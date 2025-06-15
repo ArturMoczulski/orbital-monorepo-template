@@ -80,7 +80,7 @@ program
       console.error(`Invalid category: ${category}`);
       process.exit(1);
     }
-    const templateDir = path.join(__dirname, "../../templates", template);
+    const templateDir = path.join(__dirname, "../../../templates", template);
     if (!fs.existsSync(templateDir)) {
       console.error(`Template not found: ${template}`);
       process.exit(1);

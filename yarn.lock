@@ -1234,35 +1234,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@myorg/character@workspace:libs/myorg/character":
-  version: 0.0.0-use.local
-  resolution: "@myorg/character@workspace:libs/myorg/character"
-  dependencies:
-    "@myorg/core": "workspace:*"
-    "@types/jest": "npm:^29.0.0"
-    dotenv-flow: "npm:^4.1.0"
-    jest: "npm:^29.0.0"
-    jest-util: "npm:^29.0.0"
-    rimraf: "npm:^6.0.0"
-    ts-jest: "npm:^29.0.0"
-    typescript: "npm:^5.0.0"
-  languageName: unknown
-  linkType: soft
-
-"@myorg/core@workspace:*, @myorg/core@workspace:libs/myorg/core":
-  version: 0.0.0-use.local
-  resolution: "@myorg/core@workspace:libs/myorg/core"
-  dependencies:
-    "@types/jest": "npm:^29.0.0"
-    dotenv-flow: "npm:^4.1.0"
-    jest: "npm:^29.0.0"
-    jest-util: "npm:^29.0.0"
-    rimraf: "npm:^6.0.0"
-    ts-jest: "npm:^29.0.0"
-    typescript: "npm:^5.0.0"
-  languageName: unknown
-  linkType: soft
-
 "@napi-rs/wasm-runtime@npm:^0.2.11":
   version: 0.2.11
   resolution: "@napi-rs/wasm-runtime@npm:0.2.11"
@@ -2002,6 +1973,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"characters@workspace:libs/characters":
+  version: 0.0.0-use.local
+  resolution: "characters@workspace:libs/characters"
+  dependencies:
+    "@types/jest": "npm:^29.0.0"
+    core: "workspace:*"
+    dotenv-flow: "npm:^4.1.0"
+    jest: "npm:^29.0.0"
+    jest-util: "npm:^29.0.0"
+    rimraf: "npm:^6.0.0"
+    ts-jest: "npm:^29.0.0"
+    typescript: "npm:^5.0.0"
+  languageName: unknown
+  linkType: soft
+
 "chardet@npm:^0.7.0":
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
@@ -2112,6 +2098,20 @@ __metadata:
   checksum: 10c0/8f2f7a27a1a011cc6cc88cc4da2d7d0cfa5ee0369508baae3d98c260bb3ac520691464e5bbe4ae7cdf09860c1d69ecc6f70c63c6e7c7f7e3f18ec08484dc7d9b
   languageName: node
   linkType: hard
+
+"core@workspace:*, core@workspace:libs/core":
+  version: 0.0.0-use.local
+  resolution: "core@workspace:libs/core"
+  dependencies:
+    "@types/jest": "npm:^29.0.0"
+    dotenv-flow: "npm:^4.1.0"
+    jest: "npm:^29.0.0"
+    jest-util: "npm:^29.0.0"
+    rimraf: "npm:^6.0.0"
+    ts-jest: "npm:^29.0.0"
+    typescript: "npm:^5.0.0"
+  languageName: unknown
+  linkType: soft
 
 "create-jest@npm:^29.7.0":
   version: 29.7.0
