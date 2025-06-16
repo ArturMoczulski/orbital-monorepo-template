@@ -3,7 +3,7 @@ import { run } from "../utils.js";
 import fs from "fs";
 import path from "path";
 
-const monorepoCmd: Command = new Command("monorepo").description(
+const monorepoCmd = new Command("monorepo").description(
   "Manage monorepo commands"
 );
 

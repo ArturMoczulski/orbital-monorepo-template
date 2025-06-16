@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { run, root } from "../utils.js";
 
-const manageCmd: Command = new Command("manage")
+const manageCmd = new Command("manage")
   .description("Launch interactive CLI")
   .addHelpText(
     "after",

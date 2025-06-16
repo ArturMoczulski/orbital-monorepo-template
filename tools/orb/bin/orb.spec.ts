@@ -13,11 +13,16 @@ import * as path from "path";
 
 const cli = "node";
 const orbScript = path.resolve(__dirname, "../dist/bin/orb.js");
+const tmpBase = "/tmp/orb";
 
 describe("orb CLI monorepo commands", () => {
-  const tmpRepo = path.join(__dirname, "tmp-repo");
+  // Use a base directory under /tmp for test clones
+  if (!fs.existsSync(tmpBase)) fs.mkdirSync(tmpBase, { recursive: true });
+  const tmpRepo = path.join(tmpBase, "tmp-repo");
 
   beforeAll(() => {
+    // Build the CLI in the original workspace
+    execSync("yarn workspace @orbital/orb run build", { stdio: "ignore" });
     if (fs.existsSync(tmpRepo)) fs.rmSync(tmpRepo, { recursive: true });
     fs.mkdirSync(tmpRepo);
     execSync(
@@ -26,13 +31,9 @@ describe("orb CLI monorepo commands", () => {
         "../../.."
       )} ${tmpRepo}`
     );
-    // Install dependencies in the cloned repo for PnP resolution
-    execSync(`yarn install`, { cwd: tmpRepo, stdio: "ignore" });
-    // Build the CLI in the cloned repo for tests
-    execSync(`yarn workspace @orbital/orb run build`, {
-      cwd: tmpRepo,
-      stdio: "ignore",
-    });
+    // Clone PnP-aware CLI will be invoked from original workspace via absolute path
+    // Ensure CLI is built before running tests
+    execSync("yarn workspace @orbital/orb run build", { stdio: "ignore" });
   });
 
   beforeEach(() => {
@@ -52,8 +53,8 @@ describe("orb CLI monorepo commands", () => {
       });
     } catch {}
     fs.rmSync(tmpRepo, { recursive: true });
-    const tmpRemoteBare = path.join(__dirname, "tmp-remote.git");
-    const tmpRemoteClone = path.join(__dirname, "tmp-remote-clone");
+    const tmpRemoteBare = path.join(tmpBase, "tmp-remote.git");
+    const tmpRemoteClone = path.join(tmpBase, "tmp-remote-clone");
     if (fs.existsSync(tmpRemoteBare))
       fs.rmSync(tmpRemoteBare, { recursive: true });
     if (fs.existsSync(tmpRemoteClone))
@@ -78,7 +79,7 @@ describe("orb CLI monorepo commands", () => {
   });
 
   test("monorepo update merges new upstream commits", () => {
-    const tmpRemoteBare = path.join(__dirname, "tmp-remote.git");
+    const tmpRemoteBare = path.join(tmpBase, "tmp-remote.git");
     if (fs.existsSync(tmpRemoteBare))
       fs.rmSync(tmpRemoteBare, { recursive: true });
     execSync(
@@ -96,7 +97,7 @@ describe("orb CLI monorepo commands", () => {
     execSync(`git remote add monorepo-template file://${tmpRemoteBare}`, {
       cwd: tmpRepo,
     });
-    const tmpRemoteClone = path.join(__dirname, "tmp-remote-clone");
+    const tmpRemoteClone = path.join(tmpBase, "tmp-remote-clone");
     if (fs.existsSync(tmpRemoteClone))
       fs.rmSync(tmpRemoteClone, { recursive: true });
     execSync(`git clone ${tmpRemoteBare} ${tmpRemoteClone}`);

@@ -2,7 +2,8 @@ import { Command } from "commander";
 import fs from "fs";
 import path from "path";
 
-const createCmd = new Command("create <category> <template> <name>")
+const createCmd = new Command("create")
+  .arguments("<category> <template> <name>")
   .description("Create a new project from a template non-interactively")
   .action((category: string, template: string, name: string) => {
     const projectRoot = process.cwd();

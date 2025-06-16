@@ -2,7 +2,7 @@ import { Command } from "commander";
 import fs from "fs";
 import path from "path";
 
-const profileCmd: Command = new Command("profile").description(
+const profileCmd = new Command("profile").description(
   "Profile related commands"
 );
 
