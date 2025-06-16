@@ -17,6 +17,6 @@
     "declarationMap": true,
     "isolatedModules": true
   },
-  "include": ["bin/**/*.ts", "src/**/*.ts"],
-  "exclude": ["bin/tmp-conflict-remote-clone", "bin/tmp-conflict-remote.git"]
+  "include": ["src/**/*.ts"],
+  "exclude": []
 }

@@ -16,7 +16,7 @@
     "test": "turbo run test",
     "test:monorepo-template": "yarn workspace @orbital/orb run build && jest --config jest.config.cjs",
     "lint": "turbo run lint",
-    "orb": "yarn workspace @orbital/orb run build && node tools/orb/dist/bin/orb",
+    "orb": "yarn workspace @orbital/orb run build && node tools/orb/dist/src/index.js",
     "start:dev": "dotenv-flow -e development -- turbo run dev",
     "start:staging": "dotenv-flow -e staging -- turbo run dev",
     "start:prod": "dotenv-flow -e production -- turbo run dev"

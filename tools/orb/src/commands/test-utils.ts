@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 
 export const cli = "node";
-export const orbScript = path.resolve(__dirname, "../../dist/bin/orb.js");
+export const orbScript = path.resolve(__dirname, "../../dist/src/index.js");
 export const tmpBase = "/tmp/orb";
 export const tmpRepo = path.join(tmpBase, "tmp-repo");
 

@@ -7,7 +7,7 @@ import { run, root } from "../../utils.js";
 const manage = new Command("manage")
   .description("Launch interactive CLI")
   .action(async () => {
-    const binPath = path.join(root, "tools/orb/bin/orb");
+    const binPath = path.join(root, "tools/orb/dist/src/index.js");
     while (true) {
       const projectRoot = process.cwd();
       const baseDirs = ["libs", "services", "clients"];
