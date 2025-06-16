@@ -22,15 +22,15 @@ describe("orb CLI create tool command", () => {
 
   test("create tool creates a plop plugin", () => {
     // Create the tool directory directly
-    execSync(`mkdir -p ${tmpRepo}/tools/plop-modify-json`, {
+    execSync(`mkdir -p ${tmpRepo}/tools/plop-test-plugin`, {
       cwd: tmpRepo,
     });
 
     // Create package.json
     const packageJson = {
-      name: "plop-modify-json",
+      name: "plop-test-plugin",
       version: "1.0.0",
-      description: "Plop plugin for modify-json functionality",
+      description: "Plop plugin for test functionality",
       main: "index.cjs",
       type: "commonjs",
       scripts: {
@@ -44,13 +44,13 @@ describe("orb CLI create tool command", () => {
       },
     };
     fs.writeFileSync(
-      path.join(tmpRepo, "tools", "plop-modify-json", "package.json"),
+      path.join(tmpRepo, "tools", "plop-test-plugin", "package.json"),
       JSON.stringify(packageJson, null, 2)
     );
 
     // Create index.cjs
     const indexContent = `/**
- * Plop plugin for modify-json functionality
+ * Plop plugin for test functionality
  *
  * This plugin adds custom actions to Plop for use in your generators
  */
@@ -59,31 +59,31 @@ describe("orb CLI create tool command", () => {
  * @param {import('plop').NodePlopAPI} plop
  */
 module.exports = function (plop) {
-  console.log('Loading plop-modify-json plugin');
+  console.log('Loading plop-test-plugin plugin');
   console.log('Plugin functionality not implemented yet');
   
   // Example of adding a custom action type
-  plop.setActionType('modify-json', function (answers, config) {
-    console.log('modify-json action called with:', config);
-    return 'The modify-json action is not implemented yet';
+  plop.setActionType('test-action', function (answers, config) {
+    console.log('test-action called with:', config);
+    return 'The test-action is not implemented yet';
   });
 };`;
     fs.writeFileSync(
-      path.join(tmpRepo, "tools", "plop-modify-json", "index.cjs"),
+      path.join(tmpRepo, "tools", "plop-test-plugin", "index.cjs"),
       indexContent
     );
 
     // Create README.md
-    const readmeContent = `# plop-modify-json
+    const readmeContent = `# plop-test-plugin
 
-A Plop plugin for modify-json functionality.
+A Plop plugin for test functionality.
 
 ## Installation
 
 \`\`\`bash
-npm install --save-dev plop-modify-json
+npm install --save-dev plop-test-plugin
 # or
-yarn add --dev plop-modify-json
+yarn add --dev plop-test-plugin
 \`\`\`
 
 ## Usage
@@ -93,18 +93,17 @@ In your \`plopfile.js\` or \`plopfile.cjs\`:
 \`\`\`js
 module.exports = function (plop) {
   // Load the plugin
-  plop.load('plop-modify-json');
+  plop.load('plop-test-plugin');
 
   // Now you can use the plugin's actions in your generators
   plop.setGenerator('example', {
-    description: 'Example generator using modify-json plugin',
+    description: 'Example generator using test plugin',
     prompts: [],
     actions: [
       {
-        type: 'modifyJson',
-        path: 'package.json',
-        section: 'scripts',
-        data: { 'my-script': 'echo "Hello from modify-json plugin"' }
+        type: 'testAction',
+        path: 'some/file.txt',
+        data: { 'key': 'value' }
       }
     ]
   });
@@ -113,16 +112,15 @@ module.exports = function (plop) {
 
 ## Available Actions
 
-### modifyJson
+### testAction
 
-Modifies a JSON file by adding or updating properties in a specific section.
+Performs a test action on files.
 
 \`\`\`js
 {
-  type: 'modifyJson',
-  path: 'path/to/file.json', // Path to the JSON file
-  section: 'sectionName',    // Section in the JSON to modify (e.g., 'scripts', 'dependencies')
-  data: {                    // Key-value pairs to add or update
+  type: 'testAction',
+  path: 'path/to/file.txt', // Path to the file
+  data: {                   // Key-value pairs for the action
     'key1': 'value1',
     'key2': 'value2'
   }
@@ -133,12 +131,12 @@ Modifies a JSON file by adding or updating properties in a specific section.
 
 MIT`;
     fs.writeFileSync(
-      path.join(tmpRepo, "tools", "plop-modify-json", "README.md"),
+      path.join(tmpRepo, "tools", "plop-test-plugin", "README.md"),
       readmeContent
     );
 
     // Verify the tool directory was created
-    const toolDir = path.join(tmpRepo, "tools", "plop-modify-json");
+    const toolDir = path.join(tmpRepo, "tools", "plop-test-plugin");
     expect(fs.existsSync(toolDir)).toBe(true);
 
     // Verify the files were created
@@ -150,6 +148,6 @@ MIT`;
     const pkgJson = JSON.parse(
       fs.readFileSync(path.join(toolDir, "package.json"), "utf8")
     );
-    expect(pkgJson.name).toBe("plop-modify-json");
+    expect(pkgJson.name).toBe("plop-test-plugin");
   });
 });

@@ -59,8 +59,8 @@ test("create client scaffolds a new client", () => {
   expect(cliPkg.name).toBe("@orbital/my-client");
 });
 
-// Skip this test for now as it requires plop to be installed in the test environment
-test.skip("create tool scaffolds a new tool", () => {
+// Test for creating a tool from the plop-plugin-ts template
+test("create tool scaffolds a new tool", () => {
   execFileSync(
     cli,
     [orbScript, "create", "tool", "plop-plugin-ts", "my-tool"],
@@ -74,5 +74,5 @@ test.skip("create tool scaffolds a new tool", () => {
   const toolPkg = JSON.parse(
     fs.readFileSync(path.join(toolDir, "package.json"), "utf8")
   );
-  expect(toolPkg.name).toBe("my-tool");
+  expect(toolPkg.name).toBe("@orbital/my-tool");
 });
