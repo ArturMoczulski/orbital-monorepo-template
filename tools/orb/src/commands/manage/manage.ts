@@ -109,7 +109,7 @@ const manage = new Command("manage")
           type: "list",
           name: "projectAction",
           message: "Select project action:",
-          choices: ["Add profiles", "Go back"],
+          choices: ["Add profiles", "Apply profiles", "Go back"],
         });
         if (projectAction === "Go back") continue;
 
@@ -134,6 +134,10 @@ const manage = new Command("manage")
               cwd: projectRoot,
             });
           }
+        } else if (projectAction === "Apply profiles") {
+          run(`node ${binPath} profile apply ${projectName}`, {
+            cwd: projectRoot,
+          });
         }
         continue;
       }
