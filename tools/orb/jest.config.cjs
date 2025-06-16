@@ -1,7 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: "node",
-  roots: ["<rootDir>/bin"],
+  roots: ["<rootDir>/src/commands"],
   testMatch: ["**/*.spec.ts"],
   transform: {
     "^.+\\.(ts|js)$": "babel-jest",

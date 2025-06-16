@@ -1,10 +1,10 @@
 import { Command } from "commander";
 import { run } from "../../utils.js";
 
-const testCmd = new Command("test")
+const test = new Command("test")
   .description("Run monorepo-template integration tests")
   .action(() => {
-    run("jest --config jest.config.cjs");
+    run("yarn workspace @orbital/orb test");
   });
 
-export default testCmd;
+export default test;

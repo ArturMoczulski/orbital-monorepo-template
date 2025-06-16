@@ -3,7 +3,7 @@ import type { Config } from "@jest/types";
 const config: Config.InitialOptions = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/bin/**/*.spec.ts"],
+  testMatch: ["**/bin/orb.spec.ts", "**/src/commands/**/*.spec.ts"],
   moduleFileExtensions: ["ts", "js"],
   globals: {
     "ts-jest": {
