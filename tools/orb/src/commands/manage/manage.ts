@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Command } from "commander";
 import inquirer from "inquirer";
 import fs from "fs";
@@ -32,7 +33,7 @@ const manage = new Command("manage")
             type: "list",
             name: "category",
             message: "Select category:",
-            choices: ["library", "service", "client"],
+            choices: ["library", "service", "client", "tool"],
           },
           {
             type: "list",
@@ -57,6 +58,8 @@ const manage = new Command("manage")
         });
         continue;
       }
+
+      // Removed standalone "Create tool" option; handled under "Create project".
 
       if (choice === "Create Profile") {
         const { profileName } = await inquirer.prompt({

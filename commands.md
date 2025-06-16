@@ -39,13 +39,18 @@ The Orb CLI offers the following commands:
 - `yarn orb create <category> <template> <name>`  
   Creates a new project from a template.
 
-  - `category`: `library`, `service`, or `client`.
+  - `category`: `library`, `service`, `client`, or `tool`.
   - `template`: e.g., `ts-lib`, `nestjs`, `client`.
   - `name`: Package name (scoped names allowed, e.g., `@org/pkg`).
     Example:
 
   ```bash
   yarn orb create library ts-lib @myorg/utils
+  yarn orb create tool plop-plugin-ts modify-json
+  ```
+
+  ```
+
   ```
 
 **Project profiles**

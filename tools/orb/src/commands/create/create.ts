@@ -8,11 +8,21 @@ const create = new Command("create")
   .argument("<template>")
   .argument("<name>")
   .action((category: string, template: string, name: string) => {
+    // Special handling for tool category
+    if (category === "tool" && template === "plop-plugin-ts") {
+      // Delegate to the specialized tool command
+      import("./tool.js").then((module) => {
+        const toolCommand = module.default;
+        toolCommand.parseAsync([template, name]);
+      });
+      return;
+    }
     const projectRoot = process.cwd();
     const bases: Record<string, string> = {
       library: "libs",
       service: "services",
       client: "clients",
+      tool: "tools",
     };
     if (!bases[category]) {
       console.error(`Invalid category: ${category}`);
