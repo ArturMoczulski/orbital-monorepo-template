@@ -165,7 +165,7 @@ manageCmd.action(async () => {
             ),
         });
         for (const prof of profiles) {
-          run(`node ${binPath} profile add-profile ${projectName} ${prof}`, {
+          run(`node ${binPath} profile add ${projectName} ${prof}`, {
             cwd: projectRoot,
           });
         }

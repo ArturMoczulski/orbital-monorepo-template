@@ -21,10 +21,10 @@ program.version(
   ).version
 );
 
-import createCmd from "../src/commands/create.js";
-import monorepoCmd from "../src/commands/monorepo.js";
-import profileCmd from "../src/commands/profile.js";
-import manageCmd from "../src/commands/manage.js";
+import createCmd from "../src/commands/create/index.js";
+import monorepoCmd from "../src/commands/monorepo/index.js";
+import profileCmd from "../src/commands/profile/index.js";
+import manageCmd from "../src/commands/manage/index.js";
 
 program.addCommand(createCmd);
 program.addCommand(monorepoCmd);

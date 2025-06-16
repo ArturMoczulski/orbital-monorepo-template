@@ -2,35 +2,12 @@ import { Command } from "commander";
 import fs from "fs";
 import path from "path";
 
-const profileCmd = new Command("profile").description(
-  "Profile related commands"
-);
-
-// Create a new plop-based profile
-profileCmd
-  .command("create <profileName>")
-  .description("Create a new plop-based profile non-interactively")
-  .action((profileName: string) => {
-    const cleanName = profileName
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9-_]/g, "-");
-    const profilesRoot = path.join(process.cwd(), "profiles");
-    const profileDest = path.join(profilesRoot, cleanName);
-    fs.mkdirSync(profileDest, { recursive: true });
-    fs.copyFileSync(
-      path.join(process.cwd(), "templates", "plop-profile", "plopfile.cjs"),
-      path.join(profileDest, "plopfile.cjs")
-    );
-    console.log(`Profile '${cleanName}' created.`);
-  });
-
-// Apply an existing profile by recording it in monorepo-wide orb.json
-profileCmd
-  .command("add <projectName> <profiles...>")
+const add = new Command("add")
   .description(
     "Apply one or more plop-based profiles to an existing project non-interactively"
   )
+  .argument("<projectName>")
+  .argument("<profiles...>")
   .action((projectName: string, profiles: string[]) => {
     const baseDirs = ["libs", "services", "clients"];
     let projectPath: string | undefined;
@@ -83,4 +60,4 @@ profileCmd
     );
   });
 
-export default profileCmd;
+export default add;

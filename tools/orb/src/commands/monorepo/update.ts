@@ -1,34 +1,9 @@
 import { Command } from "commander";
-import { run } from "../utils.js";
+import { run } from "../../utils.js";
 import fs from "fs";
 import path from "path";
 
-const monorepoCmd = new Command("monorepo").description(
-  "Manage monorepo commands"
-);
-
-monorepoCmd
-  .command("install")
-  .description("Install the monorepo-template remote")
-  .action(() => {
-    // Preserve original package name and version
-    const pkgPath = path.join(process.cwd(), "package.json");
-    const pkgData = fs.readFileSync(pkgPath, "utf8");
-    const pkg = JSON.parse(pkgData);
-    const originalName = pkg.name;
-    const originalVersion = pkg.version;
-
-    const remote = "monorepo-template";
-    const url = "git@github.com:ArturMoczulski/orbital-monorepo-template.git";
-    try {
-      run(`git remote remove ${remote}`, { stdio: "ignore" });
-    } catch {}
-    run(`git remote add ${remote} ${url}`);
-    console.log(`Added ${remote} remote pointing to ${url}`);
-  });
-
-monorepoCmd
-  .command("update")
+const update = new Command("update")
   .description("Update from monorepo-template remote")
   .action(() => {
     // Record original package name and version
@@ -38,7 +13,7 @@ monorepoCmd
     const originalName = pkg.name;
     const originalVersion = pkg.version;
 
-    // Preserve uncommitted local changes (e.g., version bumps) across merge
+    // Preserve uncommitted local changes across merge
     try {
       run('git stash push --include-untracked -m "orb-local-changes"', {
         stdio: "ignore",
@@ -53,7 +28,7 @@ monorepoCmd
       run(`git remote add ${remote} ${url}`);
     }
     run(`git fetch ${remote} main`);
-    // Merge with local changes preferring our versions on conflict
+    // Merge with local changes preferring our versions on conflict, allow unrelated histories
     run(`git merge ${remote}/main -X ours --allow-unrelated-histories`);
 
     // Restore stashed changes
@@ -71,11 +46,4 @@ monorepoCmd
     console.log("Monorepo updated from monorepo-template/main");
   });
 
-monorepoCmd
-  .command("test")
-  .description("Run monorepo-template integration tests")
-  .action(() => {
-    run("jest --config jest.config.cjs");
-  });
-
-export default monorepoCmd;
+export default update;
