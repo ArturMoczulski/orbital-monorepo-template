@@ -1,9 +1,8 @@
 import { Command } from "commander";
 import fs from "fs";
 import path from "path";
-import { root } from "../utils.js";
 
-const profileCmd = new Command("profile").description(
+const profileCmd: Command = new Command("profile").description(
   "Profile related commands"
 );
 
@@ -11,7 +10,7 @@ const profileCmd = new Command("profile").description(
 profileCmd
   .command("create <profileName>")
   .description("Create a new plop-based profile non-interactively")
-  .action((profileName) => {
+  .action((profileName: string) => {
     const cleanName = profileName
       .trim()
       .toLowerCase()
@@ -20,21 +19,21 @@ profileCmd
     const profileDest = path.join(profilesRoot, cleanName);
     fs.mkdirSync(profileDest, { recursive: true });
     fs.copyFileSync(
-      path.join(root, "templates", "plop-profile", "plopfile.cjs"),
+      path.join(process.cwd(), "templates", "plop-profile", "plopfile.cjs"),
       path.join(profileDest, "plopfile.cjs")
     );
     console.log(`Profile '${cleanName}' created.`);
   });
 
-// Apply an existing profile by copying its files into the project
+// Apply an existing profile by recording it in monorepo-wide orb.json
 profileCmd
   .command("add-profile <projectName> <profiles...>")
   .description(
-    "Apply a plop-based profile to an existing project non-interactively"
+    "Apply one or more plop-based profiles to an existing project non-interactively"
   )
-  .action((projectName, profiles) => {
+  .action((projectName: string, profiles: string[]) => {
     const baseDirs = ["libs", "services", "clients"];
-    let projectPath;
+    let projectPath: string | undefined;
 
     // Locate the project by matching package.json name
     for (const dir of baseDirs) {
@@ -59,7 +58,7 @@ profileCmd
 
     // Record applied profiles in monorepo-wide orb.json
     const configPath = path.join(process.cwd(), "orb.json");
-    let config = {};
+    let config: any = {};
     if (fs.existsSync(configPath)) {
       try {
         config = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -69,7 +68,7 @@ profileCmd
       }
     }
     config.profiles = config.profiles || {};
-    const projectProfiles = config.profiles[projectName] || [];
+    const projectProfiles: string[] = config.profiles[projectName] || [];
     for (const profileName of profiles) {
       if (!projectProfiles.includes(profileName)) {
         projectProfiles.push(profileName);

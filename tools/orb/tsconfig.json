@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "noEmitOnError": false,
+    "target": "ES2020",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "rootDir": ".",
+    "outDir": "dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "isolatedModules": true
+  },
+  "include": ["bin/**/*.ts", "src/**/*.ts"],
+  "exclude": ["bin/tmp-conflict-remote-clone", "bin/tmp-conflict-remote.git"]
+}

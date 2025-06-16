@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import { run, root } from "../utils.js";
 
-const manageCmd = new Command("manage")
+const manageCmd: Command = new Command("manage")
   .description("Launch interactive CLI")
   .addHelpText(
     "after",
@@ -43,7 +43,6 @@ manageCmd.action(async () => {
       choices: mainChoices,
     });
 
-    // Create project
     if (choice === "Create project") {
       const { category, template, name } = await inquirer.prompt([
         {
@@ -74,7 +73,6 @@ manageCmd.action(async () => {
       continue;
     }
 
-    // Create Profile
     if (choice === "Create Profile") {
       const { profileName } = await inquirer.prompt({
         type: "input",
@@ -85,9 +83,8 @@ manageCmd.action(async () => {
       continue;
     }
 
-    // Manage existing projects
     if (choice === "Manage projects") {
-      const projects = [];
+      const projects: { name: string; path: string }[] = [];
       for (const dir of baseDirs) {
         const dirPath = path.join(projectRoot, dir);
         if (!fs.existsSync(dirPath)) continue;
@@ -134,12 +131,14 @@ manageCmd.action(async () => {
         type: "list",
         name: "projectName",
         message: "Select project:",
-        choices: projects
-          .map((p) => p.name)
-          .concat(new inquirer.Separator(), "Go back"),
+        choices: [
+          ...projects.map((p) => p.name),
+          new inquirer.Separator(),
+          "Go back",
+        ],
       });
       if (projectName === "Go back") continue;
-      const project = projects.find((p) => p.name === projectName);
+      const project = projects.find((p) => p.name === projectName)!;
 
       const { projectAction } = await inquirer.prompt({
         type: "list",
@@ -149,21 +148,21 @@ manageCmd.action(async () => {
       });
       if (projectAction === "Go back") continue;
 
-      // Add profiles
       if (projectAction === "Add profiles") {
         const profilesDir = path.join(projectRoot, "profiles");
         if (!fs.existsSync(profilesDir)) {
           console.error("No profiles directory found.");
           continue;
         }
-        const available = fs
-          .readdirSync(profilesDir)
-          .filter((f) => fs.statSync(path.join(profilesDir, f)).isDirectory());
         const { profiles } = await inquirer.prompt({
           type: "checkbox",
           name: "profiles",
           message: "Select profiles to apply:",
-          choices: available,
+          choices: fs
+            .readdirSync(profilesDir)
+            .filter((f) =>
+              fs.statSync(path.join(profilesDir, f)).isDirectory()
+            ),
         });
         for (const prof of profiles) {
           run(`node ${binPath} profile add-profile ${projectName} ${prof}`, {
@@ -174,7 +173,6 @@ manageCmd.action(async () => {
       }
     }
 
-    // Manage monorepo
     if (choice === "Manage monorepo") {
       const { action } = await inquirer.prompt({
         type: "list",
@@ -196,7 +194,6 @@ manageCmd.action(async () => {
       continue;
     }
 
-    // Exit
     break;
   }
 });

@@ -4,15 +4,15 @@ import { fileURLToPath } from "url";
 
 const scriptPath = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(scriptPath);
-const root = path.join(__dirname, "../../..");
+const root = path.join(__dirname, "../../../..");
 
 /**
  * Execute a shell command synchronously, inheriting stdio.
- * @param {string} cmd
- * @param {object} opts
+ * @param cmd Command to execute
+ * @param opts Options for execSync (e.g., cwd and stdio)
  */
-function run(cmd, opts = {}) {
+export function run(cmd: string, opts: { cwd?: string; stdio?: any } = {}) {
   execSync(cmd, { stdio: "inherit", ...opts });
 }
 
-export { run, root };
+export { root };

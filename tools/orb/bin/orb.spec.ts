@@ -1,9 +1,18 @@
-const { execSync } = require("child_process");
-const fs = require("fs");
-const path = require("path");
+// @ts-nocheck
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterAll,
+} from "@jest/globals";
+import { execSync } from "child_process";
+import * as fs from "fs";
+import * as path from "path";
 
 const cli = "node";
-const orbScript = path.resolve(__dirname, "../dist/bin/orb");
+const orbScript = path.resolve(__dirname, "../dist/bin/orb.js");
 
 describe("orb CLI monorepo commands", () => {
   const tmpRepo = path.join(__dirname, "tmp-repo");
@@ -11,10 +20,22 @@ describe("orb CLI monorepo commands", () => {
   beforeAll(() => {
     if (fs.existsSync(tmpRepo)) fs.rmSync(tmpRepo, { recursive: true });
     fs.mkdirSync(tmpRepo);
-    execSync(`git clone --depth=1 ${process.cwd()} ${tmpRepo}`);
+    execSync(
+      `git clone --depth=1 file://${path.resolve(
+        __dirname,
+        "../../.."
+      )} ${tmpRepo}`
+    );
+    // Install dependencies in the cloned repo for PnP resolution
+    execSync(`yarn install`, { cwd: tmpRepo, stdio: "ignore" });
+    // Build the CLI in the cloned repo for tests
+    execSync(`yarn workspace @orbital/orb run build`, {
+      cwd: tmpRepo,
+      stdio: "ignore",
+    });
   });
+
   beforeEach(() => {
-    // reset monorepo remote before each test to avoid duplication errors
     try {
       execSync(`git remote remove monorepo-template`, {
         cwd: tmpRepo,
@@ -24,7 +45,6 @@ describe("orb CLI monorepo commands", () => {
   });
 
   afterAll(() => {
-    // clean up remote and temporary repos
     try {
       execSync(`git remote remove monorepo-template`, {
         cwd: tmpRepo,
@@ -41,36 +61,37 @@ describe("orb CLI monorepo commands", () => {
   });
 
   test("monorepo install sets or updates remote", () => {
-    const stdout = execSync(`${cli} ${orbScript} monorepo install`, {
+    const stdout: string = execSync(`${cli} ${orbScript} monorepo install`, {
       cwd: tmpRepo,
       encoding: "utf8",
     });
-    expect(stdout.toString()).toMatch(
-      /(Added|Updated) monorepo-template remote/
-    );
+    expect(stdout).toMatch(/(Added|Updated) monorepo-template remote/);
   });
 
   test("monorepo update fetches and merges without error", () => {
     execSync(`${cli} ${orbScript} monorepo install`, { cwd: tmpRepo });
-    const stdout = execSync(`${cli} ${orbScript} monorepo update`, {
+    const stdout: string = execSync(`${cli} ${orbScript} monorepo update`, {
       cwd: tmpRepo,
       encoding: "utf8",
     });
-    expect(stdout.toString()).toMatch(/Monorepo updated/);
+    expect(stdout).toMatch(/Monorepo updated/);
   });
 
   test("monorepo update merges new upstream commits", () => {
     const tmpRemoteBare = path.join(__dirname, "tmp-remote.git");
     if (fs.existsSync(tmpRemoteBare))
       fs.rmSync(tmpRemoteBare, { recursive: true });
-    execSync(`git clone --bare ${process.cwd()} ${tmpRemoteBare}`);
+    execSync(
+      `git clone --bare file://${path.resolve(
+        __dirname,
+        "../../.."
+      )} ${tmpRemoteBare}`
+    );
     try {
-      try {
-        execSync(`git remote remove monorepo-template`, {
-          cwd: tmpRepo,
-          stdio: "ignore",
-        });
-      } catch {}
+      execSync(`git remote remove monorepo-template`, {
+        cwd: tmpRepo,
+        stdio: "ignore",
+      });
     } catch {}
     execSync(`git remote add monorepo-template file://${tmpRemoteBare}`, {
       cwd: tmpRepo,
@@ -85,18 +106,18 @@ describe("orb CLI monorepo commands", () => {
     );
     execSync(`git commit -am "upstream change"`, { cwd: tmpRemoteClone });
     execSync(`git push`, { cwd: tmpRemoteClone });
-    const stdout3 = execSync(`${cli} ${orbScript} monorepo update`, {
+    const stdout3: string = execSync(`${cli} ${orbScript} monorepo update`, {
       cwd: tmpRepo,
       encoding: "utf8",
     });
-    expect(stdout3.toString()).toMatch(/Monorepo updated/);
+    expect(stdout3).toMatch(/Monorepo updated/);
     const readmeContent = fs.readFileSync(
       path.join(tmpRepo, "README.md"),
       "utf8"
     );
     expect(readmeContent).toMatch(/UPSTREAM CHANGE/);
   });
-  // test that monorepo update preserves custom package name and version
+
   test("monorepo update preserves package name and version", () => {
     const pkgPath = path.join(tmpRepo, "package.json");
     const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
@@ -105,24 +126,24 @@ describe("orb CLI monorepo commands", () => {
     pkg.name = customName;
     pkg.version = customVersion;
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
-    const stdout = execSync(`${cli} ${orbScript} monorepo update`, {
+    const stdout: string = execSync(`${cli} ${orbScript} monorepo update`, {
       cwd: tmpRepo,
       encoding: "utf8",
     });
-    expect(stdout.toString()).toMatch(/Monorepo updated/);
+    expect(stdout).toMatch(/Monorepo updated/);
     const updatedPkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
     expect(updatedPkg.name).toBe(customName);
     expect(updatedPkg.version).toBe(customVersion);
   });
-  // Non-interactive create commands
+
   test("create library scaffolds a new TypeScript library", () => {
     execSync(`${cli} ${orbScript} create library ts-lib my-lib`, {
       cwd: tmpRepo,
     });
-    const pkgPath = path.join(tmpRepo, "libs", "my-lib", "package.json");
-    expect(fs.existsSync(pkgPath)).toBe(true);
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
-    expect(pkg.name).toBe("@orbital/my-lib");
+    const libPkgPath = path.join(tmpRepo, "libs", "my-lib", "package.json");
+    expect(fs.existsSync(libPkgPath)).toBe(true);
+    const libPkg = JSON.parse(fs.readFileSync(libPkgPath, "utf8"));
+    expect(libPkg.name).toBe("@orbital/my-lib");
   });
 
   test("profile create scaffolds a new profile", () => {
