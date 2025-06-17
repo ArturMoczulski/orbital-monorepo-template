@@ -3,6 +3,24 @@ import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
 
+/**
+ * Parse a package name into its components
+ * Handles scoped packages (e.g., @orbital/my-tool) and regular packages
+ * @returns An object with scope (if present) and name parts
+ */
+function parsePackageName(name: string): { scope?: string; name: string } {
+  const scopeMatch = name.match(/^@([^/]+)\/(.+)$/);
+  if (scopeMatch) {
+    return {
+      scope: `@${scopeMatch[1]}`,
+      name: scopeMatch[2].replace(/[^a-zA-Z0-9-_]/g, "-"),
+    };
+  }
+  return {
+    name: name.replace(/[^a-zA-Z0-9-_]/g, "-"),
+  };
+}
+
 const create = new Command("create")
   .description("Create a new project from a template non-interactively")
   .argument(
@@ -34,8 +52,25 @@ const create = new Command("create")
       process.exit(1);
     }
 
-    // Create destination directory
-    const destDir = path.join(projectRoot, bases[category], name);
+    // Parse the package name into its components
+    const parsedName = parsePackageName(name);
+
+    // Create destination directory path
+    let destDir: string;
+    if (parsedName.scope) {
+      // For scoped packages, create a directory structure that includes the scope
+      // e.g., tools/@orbital/my-tool
+      destDir = path.join(
+        projectRoot,
+        bases[category],
+        parsedName.scope,
+        parsedName.name
+      );
+    } else {
+      // For regular packages, create a simple directory
+      // e.g., tools/my-tool
+      destDir = path.join(projectRoot, bases[category], parsedName.name);
+    }
     console.log(
       `Creating ${category} '${name}' from template '${template}' in ${destDir}`
     );
@@ -49,8 +84,8 @@ const create = new Command("create")
     if (fs.existsSync(pkgPath)) {
       const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
 
-      // Set package name (keep as is if it starts with @, otherwise add @orbital/ prefix)
-      pkg.name = name.startsWith("@") ? name : `@orbital/${name}`;
+      // Set package name to exactly what was provided
+      pkg.name = name;
 
       // Write updated package.json
       fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2));
@@ -67,6 +102,12 @@ const create = new Command("create")
           {
             cwd: projectRoot,
             stdio: "inherit",
+            env: {
+              ...process.env,
+              // Pass the parsed name components as environment variables
+              PARSED_NAME: parsedName.name,
+              PARSED_SCOPE: parsedName.scope || "",
+            },
           }
         );
       } catch (error) {

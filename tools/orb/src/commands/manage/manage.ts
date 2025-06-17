@@ -4,13 +4,14 @@ import inquirer from "inquirer";
 import fs from "fs";
 import path from "path";
 import { run, root } from "../../utils.js";
+import { listTemplates } from "./helpers.js";
 
 const manage = new Command("manage")
   .description("Launch interactive CLI")
   .action(async () => {
     const binPath = path.join(root, "tools/orb/dist/src/index.js");
     while (true) {
-      const projectRoot = process.cwd();
+      const projectRoot = root;
       const baseDirs = ["libs", "services", "clients"];
 
       const mainChoices = [
@@ -39,13 +40,7 @@ const manage = new Command("manage")
             type: "list",
             name: "template",
             message: "Select template:",
-            choices: fs
-              .readdirSync(path.join(projectRoot, "templates"))
-              .filter((d) =>
-                fs
-                  .statSync(path.join(projectRoot, "templates", d))
-                  .isDirectory()
-              ),
+            choices: listTemplates(root),
           },
           {
             type: "input",
