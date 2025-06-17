@@ -39,14 +39,7 @@ module.exports = function (plop) {
     actions: function (data) {
       const { name: parsedName, scope: parsedScope } = getParsedName();
 
-      // When called from orb create, all files have already been copied
-      // This plopfile is only needed for direct plop usage
-      if (process.env.PARSED_NAME) {
-        console.log("Files already copied by orb create command");
-        return [];
-      }
-
-      // Only used when running plop directly
+      // Add skipIfExists to all actions to prevent errors when files already exist
       const baseDir = parsedScope
         ? path.join(parsedScope, parsedName)
         : parsedName;
@@ -56,21 +49,25 @@ module.exports = function (plop) {
           type: "add",
           path: `tools/${baseDir}/package.json`,
           templateFile: path.join(templateDir, "package.json"),
+          skipIfExists: true,
         },
         {
           type: "add",
           path: `tools/${baseDir}/tsconfig.json`,
           templateFile: path.join(templateDir, "tsconfig.json"),
+          skipIfExists: true,
         },
         {
           type: "add",
           path: `tools/${baseDir}/src/index.ts`,
           templateFile: path.join(templateDir, "src", "index.ts"),
+          skipIfExists: true,
         },
         {
           type: "add",
           path: `tools/${baseDir}/index.cjs`,
           templateFile: path.join(templateDir, "index.cjs"),
+          skipIfExists: true,
         },
       ];
     },

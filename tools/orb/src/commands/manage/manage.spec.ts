@@ -4,7 +4,7 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 
-import { listTemplates } from "./helpers.js";
+import { listTemplates } from "./helpers";
 
 describe("listTemplates helper", () => {
   it("returns only directory names under templates folder", () => {

@@ -75,8 +75,18 @@ const create = new Command("create")
       `Creating ${category} '${name}' from template '${template}' in ${destDir}`
     );
 
-    // Create directory and copy template files
+    // Check if the destination directory already exists and has content
+    if (fs.existsSync(destDir) && fs.readdirSync(destDir).length > 0) {
+      console.error(
+        `Error: A project named '${name}' already exists in ${destDir}`
+      );
+      process.exit(1);
+    }
+
+    // Create destination directory
     fs.mkdirSync(destDir, { recursive: true });
+
+    // Copy the entire template directory to the destination
     fs.cpSync(templateDir, destDir, { recursive: true });
 
     // Update package.json if it exists
