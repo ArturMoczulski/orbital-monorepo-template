@@ -1154,7 +1154,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-env@npm:^7.27.2":
+"@babel/preset-env@npm:^7.22.15, @babel/preset-env@npm:^7.27.2":
   version: 7.27.2
   resolution: "@babel/preset-env@npm:7.27.2"
   dependencies:
@@ -1246,7 +1246,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/preset-typescript@npm:^7.27.1":
+"@babel/preset-typescript@npm:^7.21.5, @babel/preset-typescript@npm:^7.27.1":
   version: 7.27.1
   resolution: "@babel/preset-typescript@npm:7.27.1"
   dependencies:
@@ -6245,6 +6245,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "orbital@workspace:."
   dependencies:
+    "@babel/preset-env": "npm:^7.22.15"
+    "@babel/preset-typescript": "npm:^7.21.5"
     "@types/jest": "npm:^29.5.14"
     commander: "npm:^14.0.0"
     dotenv-flow: "npm:^4.1.0"
@@ -6254,6 +6256,7 @@ __metadata:
     inquirer: "npm:^12.6.3"
     jest: "npm:^30.0.0"
     jest-util: "npm:^29.7.0"
+    node-plop: "npm:^0.32.0"
     plop: "npm:^4.0.1"
     rimraf: "npm:^6.0.1"
     ts-jest: "npm:^29.1.0"

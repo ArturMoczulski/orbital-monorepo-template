@@ -3,5 +3,9 @@
     "@orbital/library5": [
       "with-llm"
     ]
-  }
+  },
+  "internalPackages": [
+    "@orbital/orb",
+    "@orbital/plop-modify-json"
+  ]
 }

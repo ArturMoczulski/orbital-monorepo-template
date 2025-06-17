@@ -102,28 +102,7 @@ const create = new Command("create")
       console.log(`Updated package name to ${pkg.name}`);
     }
 
-    // Run plopfile if it exists
-    const plopfilePath = path.join(destDir, "plopfile.cjs");
-    if (fs.existsSync(plopfilePath)) {
-      try {
-        console.log(`Running plopfile in ${destDir}`);
-        execSync(
-          `npx plop default --plopfile ${plopfilePath} --dest ${projectRoot} -- ${name}`,
-          {
-            cwd: projectRoot,
-            stdio: "inherit",
-            env: {
-              ...process.env,
-              // Pass the parsed name components as environment variables
-              PARSED_NAME: parsedName.name,
-              PARSED_SCOPE: parsedName.scope || "",
-            },
-          }
-        );
-      } catch (error) {
-        console.error(`Error running plopfile: ${error}`);
-      }
-    }
+    // Skipping plopfile execution in create command
 
     console.log(`Successfully created ${category}: ${name}`);
   });

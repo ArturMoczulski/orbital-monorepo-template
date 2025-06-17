@@ -13,8 +13,9 @@
   "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358e4d65c3c",
   "scripts": {
     "build": "turbo run build",
-    "test": "turbo run test",
-    "test:monorepo-template": "yarn workspace @orbital/orb run build && jest --config jest.config.cjs",
+    "test": "jest --config jest.config.cjs",
+    "test:monorepo": "jest --config jest.config.monorepo.cjs",
+    "test:plop-modify-json": "yarn workspace @orbital/plop-modify-json test",
     "lint": "turbo run lint",
     "orb": "yarn workspace @orbital/orb run build && node tools/@orbital/orb/dist/src/index.js",
     "start:dev": "dotenv-flow -e development -- turbo run dev",
@@ -22,15 +23,20 @@
     "start:prod": "dotenv-flow -e production -- turbo run dev"
   },
   "devDependencies": {
+    "@babel/core": "^7.22.15",
+    "@babel/preset-env": "^7.22.15",
+    "@babel/preset-typescript": "^7.21.5",
+    "babel-jest": "^30.0.0",
+    "ts-jest": "^29.1.0",
     "@types/jest": "^29.5.14",
     "dotenv-flow": "^4.1.0",
     "dotenv-flow-cli": "^1.1.1",
     "execa": "^9.6.0",
     "jest": "^30.0.0",
     "jest-util": "^29.7.0",
+    "node-plop": "^0.32.0",
     "plop": "^4.0.1",
     "rimraf": "^6.0.1",
-    "ts-jest": "^29.1.0",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
   },
