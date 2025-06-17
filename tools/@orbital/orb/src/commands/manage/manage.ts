@@ -9,7 +9,7 @@ import { listTemplates } from "./helpers.js";
 const manage = new Command("manage")
   .description("Launch interactive CLI")
   .action(async () => {
-    const binPath = path.join(root, "tools/orb/dist/src/index.js");
+    const binPath = path.join(root, "tools/@orbital/orb/dist/src/index.js");
     while (true) {
       const projectRoot = root;
       const baseDirs = ["libs", "services", "clients"];

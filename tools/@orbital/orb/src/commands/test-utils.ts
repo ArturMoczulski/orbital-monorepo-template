@@ -26,6 +26,11 @@ export function setupTmpRepo() {
   // Determine original project root (monorepo root)
   // Use __dirname to derive workspace root regardless of cwd
   const copyRoot = path.resolve(__dirname, "../../../../..");
+  // Build plop-modify-json plugin to ensure dist files exist
+  execSync("yarn workspace @orbital/plop-modify-json build", {
+    cwd: copyRoot,
+    stdio: "inherit",
+  });
 
   // Copy orb.json for profile and settings commands
   fs.copyFileSync(
@@ -56,6 +61,20 @@ import '${cliModulePath}';`;
 
   // Point orbScript to wrapper script
   orbScript = wrapperPath;
+
+  // Copy plop-modify-json plugin into temp repo node_modules so E2E can require it
+  const pluginSrc = path.join(copyRoot, "tools/@orbital/plop-modify-json");
+  const pluginDest = path.join(
+    tmpRepo,
+    "node_modules/@orbital/plop-modify-json"
+  );
+  fs.mkdirSync(path.dirname(pluginDest), { recursive: true });
+  fs.cpSync(pluginSrc, pluginDest, { recursive: true });
+  // Patch plugin package.json main to point to index.cjs
+  const pluginPkgPath = path.join(pluginDest, "package.json");
+  const pluginPkg = JSON.parse(fs.readFileSync(pluginPkgPath, "utf8"));
+  pluginPkg.main = "index.cjs";
+  fs.writeFileSync(pluginPkgPath, JSON.stringify(pluginPkg, null, 2) + "\n");
 
   // Initialize git repo for monorepo commands
   execSync("git init -b main", { cwd: tmpRepo });

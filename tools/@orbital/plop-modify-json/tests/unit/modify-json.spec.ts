@@ -51,4 +51,26 @@ describe("modify-json action type", () => {
       )
     ).toThrow(/Conflict modifying JSON key 'version'/);
   });
+  it("throws on conflicting nested primitive values", () => {
+    const action = plop.getActionType("modify-json");
+    expect(() =>
+      action(
+        {},
+        {
+          path: path.join(__dirname, "temp.json"),
+          data: { scripts: { hello: "say hi" } },
+        }
+      )
+    ).toThrow(/Conflict modifying JSON key 'hello'/);
+  });
+  // Test for malformed JSON input
+  it("throws an error on malformed JSON", () => {
+    const action = plop.getActionType("modify-json");
+    const filePath = path.join(__dirname, "temp.json");
+    // Overwrite fixture with invalid JSON
+    fs.writeFileSync(filePath, "{ invalid json }", "utf8");
+    expect(() => action({}, { path: filePath, data: {} })).toThrow(
+      /Error parsing JSON/
+    );
+  });
 });

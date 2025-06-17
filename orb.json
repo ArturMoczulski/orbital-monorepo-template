@@ -2,6 +2,9 @@
   "profiles": {
     "@orbital/library5": [
       "with-llm"
+    ],
+    "helloworld": [
+      "yarnscripts"
     ]
   },
   "internalPackages": [

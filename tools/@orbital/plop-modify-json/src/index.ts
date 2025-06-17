@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 
 function deepMerge(target: any, source: any): any {
   for (const key of Object.keys(source)) {
