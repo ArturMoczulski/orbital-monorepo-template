@@ -108,7 +108,7 @@ const create = new Command("create")
       try {
         console.log(`Running plopfile in ${destDir}`);
         execSync(
-          `npx plop --plopfile ${plopfilePath} --dest ${projectRoot} -- ${name}`,
+          `npx plop default --plopfile ${plopfilePath} --dest ${projectRoot} -- ${name}`,
           {
             cwd: projectRoot,
             stdio: "inherit",

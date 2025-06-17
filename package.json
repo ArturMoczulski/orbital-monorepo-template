@@ -7,16 +7,16 @@
     "libs/**",
     "services/**",
     "clients/**",
-    "tools/orb",
+    "tools/@orbital/orb",
     "!templates/**"
   ],
-  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c",
+  "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358e4d65c3c",
   "scripts": {
     "build": "turbo run build",
     "test": "turbo run test",
-    "test:monorepo-template": "yarn workspace @orbital/orb run build && jest --config jest.config.cjs",
+    "test:monorepo-template": "yarn workspace @orbital/orb run build && jest --config jest.config.cjs --watchAll=false",
     "lint": "turbo run lint",
-    "orb": "yarn workspace @orbital/orb run build && node tools/orb/dist/src/index.js",
+    "orb": "yarn workspace @orbital/orb run build && node tools/@orbital/orb/dist/src/index.js",
     "start:dev": "dotenv-flow -e development -- turbo run dev",
     "start:staging": "dotenv-flow -e staging -- turbo run dev",
     "start:prod": "dotenv-flow -e production -- turbo run dev"

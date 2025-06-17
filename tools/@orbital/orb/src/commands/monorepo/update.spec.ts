@@ -7,8 +7,8 @@ import {
   beforeEach,
   afterAll,
 } from "@jest/globals";
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 import { execSync } from "child_process";
 import {
   setupTmpRepo,

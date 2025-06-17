@@ -5,7 +5,7 @@ module.exports = {
   haste: {
     throwOnModuleCollision: false,
   },
-  roots: ["<rootDir>/tools/orb/bin"],
+  roots: ["<rootDir>/tools/@orbital/orb/src"],
   testMatch: ["**/*.spec.ts"],
   transform: {
     "^.+\\.(ts|js)$": "ts-jest",

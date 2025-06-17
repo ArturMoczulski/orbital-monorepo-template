@@ -2233,9 +2233,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@orbital/orb@workspace:tools/orb":
+"@orbital/library5@workspace:libs/@orbital/library5":
   version: 0.0.0-use.local
-  resolution: "@orbital/orb@workspace:tools/orb"
+  resolution: "@orbital/library5@workspace:libs/@orbital/library5"
+  dependencies:
+    "@types/jest": "npm:^29.0.0"
+    dotenv-flow: "npm:^4.1.0"
+    jest: "npm:^29.0.0"
+    jest-util: "npm:^29.0.0"
+    rimraf: "npm:^6.0.0"
+    ts-jest: "npm:^29.0.0"
+    typescript: "npm:^5.0.0"
+  languageName: unknown
+  linkType: soft
+
+"@orbital/orb@workspace:tools/@orbital/orb":
+  version: 0.0.0-use.local
+  resolution: "@orbital/orb@workspace:tools/@orbital/orb"
   dependencies:
     "@babel/core": "npm:^7.27.4"
     "@babel/preset-env": "npm:^7.27.2"
@@ -2259,7 +2273,7 @@ __metadata:
     ts-node: "npm:^10.9.1"
     typescript: "npm:^5.8.3"
   bin:
-    orb: dist/bin/orb
+    orb: dist/src/index.js
   languageName: unknown
   linkType: soft
 
@@ -2485,7 +2499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.14":
+"@types/jest@npm:^29.0.0, @types/jest@npm:^29.5.14":
   version: 29.5.14
   resolution: "@types/jest@npm:29.5.14"
   dependencies:
@@ -5419,7 +5433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-util@npm:^29.7.0":
+"jest-util@npm:^29.0.0, jest-util@npm:^29.7.0":
   version: 29.7.0
   resolution: "jest-util@npm:29.7.0"
   dependencies:
@@ -5518,7 +5532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:^29.5.0":
+"jest@npm:^29.0.0, jest@npm:^29.5.0":
   version: 29.7.0
   resolution: "jest@npm:29.7.0"
   dependencies:
@@ -6763,7 +6777,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^6.0.1":
+"rimraf@npm:^6.0.0, rimraf@npm:^6.0.1":
   version: 6.0.1
   resolution: "rimraf@npm:6.0.1"
   dependencies:
@@ -7189,7 +7203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.1.0":
+"ts-jest@npm:^29.0.0, ts-jest@npm:^29.1.0":
   version: 29.4.0
   resolution: "ts-jest@npm:29.4.0"
   dependencies:
@@ -7366,7 +7380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.8.3":
+"typescript@npm:^5.0.0, typescript@npm:^5.8.3":
   version: 5.8.3
   resolution: "typescript@npm:5.8.3"
   bin:
@@ -7376,7 +7390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.0.0#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.8.3#optional!builtin<compat/typescript>":
   version: 5.8.3
   resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:

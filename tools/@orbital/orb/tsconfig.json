@@ -11,7 +11,7 @@
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "types": ["node", "inquirer"],
+    "types": ["node"],
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
