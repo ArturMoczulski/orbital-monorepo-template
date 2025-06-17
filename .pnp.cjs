@@ -21,6 +21,10 @@ const RAW_RUNTIME_STATE =
     {\
       "name": "@orbital/orb",\
       "reference": "workspace:tools/@orbital/orb"\
+    },\
+    {\
+      "name": "@orbital/plop-modify-json",\
+      "reference": "workspace:tools/@orbital/plop-modify-json"\
     }\
   ],\
   "enableTopLevelFallback": true,\
@@ -29,6 +33,7 @@ const RAW_RUNTIME_STATE =
   "fallbackExclusionList": [\
     ["@orbital/library5", ["workspace:libs/@orbital/library5"]],\
     ["@orbital/orb", ["workspace:tools/@orbital/orb"]],\
+    ["@orbital/plop-modify-json", ["workspace:tools/@orbital/plop-modify-json"]],\
     ["orbital", ["workspace:."]]\
   ],\
   "fallbackPool": [\
@@ -3987,6 +3992,22 @@ const RAW_RUNTIME_STATE =
           ["plop", "npm:4.0.1"],\
           ["ts-jest", "virtual:47a277efb8acd10d6b4be87e73cfb8dfce83ff5754dfbb354215b9cda8650468457747211bd66d4b166eb9a9629df7480f64a54a52342555e2db0703b39db4b0#npm:29.4.0"],\
           ["ts-node", "virtual:47a277efb8acd10d6b4be87e73cfb8dfce83ff5754dfbb354215b9cda8650468457747211bd66d4b166eb9a9629df7480f64a54a52342555e2db0703b39db4b0#npm:10.9.2"],\
+          ["typescript", "patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"]\
+        ],\
+        "linkType": "SOFT"\
+      }]\
+    ]],\
+    ["@orbital/plop-modify-json", [\
+      ["workspace:tools/@orbital/plop-modify-json", {\
+        "packageLocation": "./tools/@orbital/plop-modify-json/",\
+        "packageDependencies": [\
+          ["@orbital/plop-modify-json", "workspace:tools/@orbital/plop-modify-json"],\
+          ["@types/jest", "npm:29.5.14"],\
+          ["dotenv-flow", "npm:4.1.0"],\
+          ["jest", "virtual:4cc9e404ab54b0864fe7840e567527c2c22a9f22d6b360bf830cb68f96ffebd8956739765dc6c24f67332376dfcdef9dcee3a8288933542a5913f0b66fe5638b#npm:29.7.0"],\
+          ["jest-util", "npm:29.7.0"],\
+          ["rimraf", "npm:6.0.1"],\
+          ["ts-jest", "virtual:4cc9e404ab54b0864fe7840e567527c2c22a9f22d6b360bf830cb68f96ffebd8956739765dc6c24f67332376dfcdef9dcee3a8288933542a5913f0b66fe5638b#npm:29.4.0"],\
           ["typescript", "patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"]\
         ],\
         "linkType": "SOFT"\

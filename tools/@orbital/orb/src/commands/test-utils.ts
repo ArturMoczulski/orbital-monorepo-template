@@ -23,9 +23,9 @@ export function setupTmpRepo() {
   tmpRepo = path.join(tmpBase, "tmp-repo");
   fs.mkdirSync(tmpRepo, { recursive: true });
 
-  // Determine original project root
-  // Use current working directory as project root for copying resources
-  const copyRoot = process.cwd();
+  // Determine original project root (monorepo root)
+  // Use __dirname to derive workspace root regardless of cwd
+  const copyRoot = path.resolve(__dirname, "../../../../..");
 
   // Copy orb.json for profile and settings commands
   fs.copyFileSync(
