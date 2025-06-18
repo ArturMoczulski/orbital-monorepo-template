@@ -1851,7 +1851,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/globals@npm:^29.5.0, @jest/globals@npm:^29.7.0":
+"@jest/globals@npm:^29.0.0, @jest/globals@npm:^29.5.0, @jest/globals@npm:^29.7.0":
   version: 29.7.0
   resolution: "@jest/globals@npm:29.7.0"
   dependencies:
@@ -2263,6 +2263,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@orbital/plop-modify-env@workspace:tools/@orbital/plop-modify-env":
+  version: 0.0.0-use.local
+  resolution: "@orbital/plop-modify-env@workspace:tools/@orbital/plop-modify-env"
+  dependencies:
+    "@jest/globals": "npm:^29.0.0"
+    "@types/dotenv": "npm:^8.2.0"
+    "@types/jest": "npm:^29.0.0"
+    "@types/node": "npm:^20.0.0"
+    jest: "npm:^29.0.0"
+    jest-util: "npm:^29.0.0"
+    rimraf: "npm:^6.0.0"
+    ts-jest: "npm:^29.0.0"
+    typescript: "npm:^5.0.0"
+  peerDependencies:
+    dotenv: ^16.3.1
+  languageName: unknown
+  linkType: soft
+
 "@orbital/plop-modify-json@workspace:tools/@orbital/plop-modify-json":
   version: 0.0.0-use.local
   resolution: "@orbital/plop-modify-json@workspace:tools/@orbital/plop-modify-json"
@@ -2430,6 +2448,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dotenv@npm:^8.2.0":
+  version: 8.2.3
+  resolution: "@types/dotenv@npm:8.2.3"
+  dependencies:
+    dotenv: "npm:*"
+  checksum: 10c0/af9178da617959cddc8259aaa3f16c474523ead469f4a03490de2f2d1cafc8615c5d0d1ed3fad837096218126421c38cd46b4065548bb5aee3cc002c518b69f7
+  languageName: node
+  linkType: hard
+
 "@types/figlet@npm:^1.5.5":
   version: 1.7.0
   resolution: "@types/figlet@npm:1.7.0"
@@ -2533,6 +2560,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/21e4a5382ce84f4ac62e3fe21b63b699c9e1ff92114d931634959fe0f02f63317987ba05726c731486b2d11a6356e74a4f1fb05a23019448f91401d592fc1ec8
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.0.0":
+  version: 20.19.1
+  resolution: "@types/node@npm:20.19.1"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/4f1c3c8ec24c79af6802b376fa307904abf19accb9ac291de0bfc02220494c8b027d3ef733dbf64cc09b37594f22f679a15eabb30f3785bcfcc13bd9bbd8c0e2
   languageName: node
   linkType: hard
 
@@ -3535,6 +3571,13 @@ __metadata:
     no-case: "npm:^3.0.4"
     tslib: "npm:^2.0.3"
   checksum: 10c0/5b859ea65097a7ea870e2c91b5768b72ddf7fa947223fd29e167bcdff58fe731d941c48e47a38ec8aa8e43044c8fbd15cd8fa21689a526bc34b6548197cd5b05
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:*, dotenv@npm:^16.3.1":
+  version: 16.5.0
+  resolution: "dotenv@npm:16.5.0"
+  checksum: 10c0/5bc94c919fbd955bf0ba44d33922a1e93d1078e64a1db5c30faeded1d996e7a83c55332cb8ea4fae5a9ca4d0be44cbceb95c5811e70f9f095298df09d1997dd9
   languageName: node
   linkType: hard
 
@@ -6197,6 +6240,7 @@ __metadata:
     "@types/jest": "npm:^29.5.14"
     babel-jest: "npm:^30.0.0"
     commander: "npm:^14.0.0"
+    dotenv: "npm:^16.3.1"
     execa: "npm:^9.6.0"
     figlet: "npm:^1.6.0"
     inquirer: "npm:^12.6.3"
@@ -7383,6 +7427,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
