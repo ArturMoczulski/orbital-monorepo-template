@@ -192,11 +192,10 @@ export function applyProfiles(projectName: string): string[] {
 
     console.log(`Applying profile: ${profileName}`);
     try {
+      // Use plop to apply profile in the target project directory
       run(
-        `yarn plop default --plopfile "${plopfilePath}" --dest "${projectPath}"`,
-        {
-          cwd: projectPath,
-        }
+        `npx plop --plopfile "${plopfilePath}" --dest "${projectPath}" default`,
+        { cwd: projectPath }
       );
     } catch (error) {
       console.error(`Error applying profile ${profileName}:`, error);

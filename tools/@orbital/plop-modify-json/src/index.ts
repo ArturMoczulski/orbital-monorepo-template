@@ -3,27 +3,31 @@ import * as path from "path";
 
 function deepMerge(target: any, source: any): any {
   for (const key of Object.keys(source)) {
-    if (
-      source[key] &&
-      typeof source[key] === "object" &&
-      !Array.isArray(source[key]) &&
-      target[key] &&
-      typeof target[key] === "object" &&
-      !Array.isArray(target[key])
-    ) {
-      target[key] = deepMerge(target[key], source[key]);
-    } else {
-      if (
-        target[key] !== undefined &&
-        target[key] !== source[key] &&
-        typeof target[key] !== "object" &&
-        !Array.isArray(target[key])
-      ) {
+    const srcVal = source[key];
+    const tgtVal = target[key];
+    if (srcVal && typeof srcVal === "object" && !Array.isArray(srcVal)) {
+      if (tgtVal && typeof tgtVal === "object" && !Array.isArray(tgtVal)) {
+        target[key] = deepMerge(tgtVal, srcVal);
+      } else {
+        // conflict with nested primitive values
+        const nestedKey = Object.keys(srcVal)[0];
+        const nestedVal = srcVal[nestedKey];
         throw new Error(
-          `Conflict modifying JSON key '${key}': existing '${target[key]}' vs new '${source[key]}'`
+          `Conflict modifying JSON key '${nestedKey}': existing '${tgtVal}' vs new '${nestedVal}'`
         );
       }
-      target[key] = source[key];
+    } else {
+      if (
+        tgtVal !== undefined &&
+        tgtVal !== srcVal &&
+        typeof tgtVal !== "object" &&
+        !Array.isArray(tgtVal)
+      ) {
+        throw new Error(
+          `Conflict modifying JSON key '${key}': existing '${tgtVal}' vs new '${srcVal}'`
+        );
+      }
+      target[key] = srcVal;
     }
   }
   return target;
@@ -37,8 +41,7 @@ export default function modifyJson(plop: any): void {
       if (path.isAbsolute(config.path)) {
         filePath = config.path;
       } else {
-        const pkgRoot = path.resolve(__dirname, "..");
-        filePath = path.resolve(pkgRoot, config.path);
+        filePath = path.resolve(process.cwd(), config.path);
       }
 
       if (!fs.existsSync(filePath)) {
@@ -46,7 +49,12 @@ export default function modifyJson(plop: any): void {
       }
 
       const content = fs.readFileSync(filePath, "utf8");
-      const json = JSON.parse(content);
+      let json: any;
+      try {
+        json = JSON.parse(content);
+      } catch (err: any) {
+        throw new Error(`Error parsing JSON: ${err.message}`);
+      }
       const merged = deepMerge(json, config.data);
       fs.writeFileSync(filePath, JSON.stringify(merged, null, 2) + "\n");
       return `Modified JSON at ${filePath}`;

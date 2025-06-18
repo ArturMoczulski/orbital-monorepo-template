@@ -1,12 +1,5 @@
 {
-  "profiles": {
-    "@orbital/library5": [
-      "with-llm"
-    ],
-    "helloworld": [
-      "yarnscripts"
-    ]
-  },
+  "profiles": {},
   "internalPackages": [
     "@orbital/orb",
     "@orbital/plop-modify-json"
