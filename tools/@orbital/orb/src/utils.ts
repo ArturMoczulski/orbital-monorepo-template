@@ -71,17 +71,31 @@ export function applyProfiles(projectName: string): string[] {
     process.exit(1);
   }
 
-  if (
-    !config.profiles ||
-    !config.profiles[projectName] ||
-    !config.profiles[projectName].length
-  ) {
+  // Get default profiles (if any)
+  const defaultProfiles = config.defaultProfiles || [];
+
+  // Get project-specific profiles (if any)
+  const projectProfiles =
+    config.profiles && config.profiles[projectName]
+      ? config.profiles[projectName]
+      : [];
+
+  // Combine default profiles and project-specific profiles
+  const profiles = [...defaultProfiles, ...projectProfiles];
+
+  if (profiles.length === 0) {
     console.log(`No profiles found for project: ${projectName}`);
     return [];
   }
 
-  const profiles = config.profiles[projectName];
   console.log(`Applying ${profiles.length} profile(s) to ${projectName}...`);
+  if (defaultProfiles.length > 0) {
+    console.log(
+      `Including ${
+        defaultProfiles.length
+      } default profile(s): ${defaultProfiles.join(", ")}`
+    );
+  }
 
   // Apply each profile using plop
   for (const profileName of profiles) {

@@ -13,6 +13,14 @@
           "description": "Profile name"
         }
       }
+    },
+    "defaultProfiles": {
+      "type": "array",
+      "description": "List of profiles that are applied to all projects",
+      "items": {
+        "type": "string",
+        "description": "Profile name"
+      }
     }
   },
   "required": [

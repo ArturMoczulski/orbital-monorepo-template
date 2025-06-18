@@ -421,4 +421,175 @@ module.exports = function (plop) {
     );
     expect(Object.keys(reappliedPkg.scripts).length).toBe(2); // Still just 2 scripts, no duplication
   });
+
+  test("profile apply applies default profiles and project profiles", () => {
+    // Create two test profiles for default profiles
+    execSync(`${cli} ${orbScript} profile create root-env`, {
+      cwd: tmpRepo,
+    });
+    execSync(`${cli} ${orbScript} profile create base-config`, {
+      cwd: tmpRepo,
+    });
+
+    // Create a test profile for project-specific profile
+    execSync(`${cli} ${orbScript} profile create project-specific`, {
+      cwd: tmpRepo,
+    });
+
+    // Create a test project
+    execSync(`mkdir -p ${tmpRepo}/libs/default-test-lib`, {
+      cwd: tmpRepo,
+    });
+
+    // Create a package.json for the test project
+    const pkgJson = {
+      name: "default-test-lib",
+      version: "1.0.0",
+      scripts: {},
+    };
+    fs.writeFileSync(
+      path.join(tmpRepo, "libs", "default-test-lib", "package.json"),
+      JSON.stringify(pkgJson, null, 2)
+    );
+
+    // Create profiles directories
+    execSync(`mkdir -p ${tmpRepo}/profiles/root-env`, {
+      cwd: tmpRepo,
+    });
+    execSync(`mkdir -p ${tmpRepo}/profiles/base-config`, {
+      cwd: tmpRepo,
+    });
+    execSync(`mkdir -p ${tmpRepo}/profiles/project-specific`, {
+      cwd: tmpRepo,
+    });
+
+    // Create templates directories
+    execSync(`mkdir -p ${tmpRepo}/templates/root-env`, {
+      cwd: tmpRepo,
+    });
+    execSync(`mkdir -p ${tmpRepo}/templates/base-config`, {
+      cwd: tmpRepo,
+    });
+    execSync(`mkdir -p ${tmpRepo}/templates/project-specific`, {
+      cwd: tmpRepo,
+    });
+
+    // Create plopfiles for each profile
+    const rootEnvPlopfile = `
+module.exports = function (plop) {
+  plop.setGenerator('default', {
+    description: 'Add root-env marker',
+    prompts: [],
+    actions: [
+      {
+        type: 'add',
+        path: 'root-env-marker.txt',
+        template: 'This file was created by the root-env profile'
+      }
+    ]
+  });
+};
+`;
+    fs.writeFileSync(
+      path.join(tmpRepo, "templates", "root-env", "plopfile.cjs"),
+      rootEnvPlopfile
+    );
+
+    const baseConfigPlopfile = `
+module.exports = function (plop) {
+  plop.setGenerator('default', {
+    description: 'Add base-config marker',
+    prompts: [],
+    actions: [
+      {
+        type: 'add',
+        path: 'base-config-marker.txt',
+        template: 'This file was created by the base-config profile'
+      }
+    ]
+  });
+};
+`;
+    fs.writeFileSync(
+      path.join(tmpRepo, "templates", "base-config", "plopfile.cjs"),
+      baseConfigPlopfile
+    );
+
+    const projectSpecificPlopfile = `
+module.exports = function (plop) {
+  plop.setGenerator('default', {
+    description: 'Add project-specific marker',
+    prompts: [],
+    actions: [
+      {
+        type: 'add',
+        path: 'project-specific-marker.txt',
+        template: 'This file was created by the project-specific profile'
+      }
+    ]
+  });
+};
+`;
+    fs.writeFileSync(
+      path.join(tmpRepo, "templates", "project-specific", "plopfile.cjs"),
+      projectSpecificPlopfile
+    );
+
+    // Update orb.json to include default profiles
+    const orbConfigPath = path.join(tmpRepo, "orb.json");
+    const orbConfig = JSON.parse(fs.readFileSync(orbConfigPath, "utf8"));
+
+    // Add default profiles
+    orbConfig.defaultProfiles = ["root-env", "base-config"];
+
+    // Add project-specific profile
+    if (!orbConfig.profiles) {
+      orbConfig.profiles = {};
+    }
+    orbConfig.profiles["default-test-lib"] = ["project-specific"];
+
+    fs.writeFileSync(orbConfigPath, JSON.stringify(orbConfig, null, 2));
+
+    // Apply profiles
+    execSync(`${cli} ${orbScript} profile apply default-test-lib`, {
+      cwd: tmpRepo,
+      encoding: "utf8",
+    });
+
+    // Verify all marker files were created
+    const rootEnvMarkerPath = path.join(
+      tmpRepo,
+      "libs",
+      "default-test-lib",
+      "root-env-marker.txt"
+    );
+    const baseConfigMarkerPath = path.join(
+      tmpRepo,
+      "libs",
+      "default-test-lib",
+      "base-config-marker.txt"
+    );
+    const projectSpecificMarkerPath = path.join(
+      tmpRepo,
+      "libs",
+      "default-test-lib",
+      "project-specific-marker.txt"
+    );
+
+    // Check that all marker files exist
+    expect(fs.existsSync(rootEnvMarkerPath)).toBe(true);
+    expect(fs.existsSync(baseConfigMarkerPath)).toBe(true);
+    expect(fs.existsSync(projectSpecificMarkerPath)).toBe(true);
+
+    // Check the content of each marker file
+    expect(fs.readFileSync(rootEnvMarkerPath, "utf8")).toContain(
+      "This file was created by the root-env profile"
+    );
+    expect(fs.readFileSync(baseConfigMarkerPath, "utf8")).toContain(
+      "This file was created by the base-config profile"
+    );
+    expect(fs.readFileSync(projectSpecificMarkerPath, "utf8")).toContain(
+      "This file was created by the project-specific profile"
+    );
+  });
 });
