@@ -5067,6 +5067,7 @@ const RAW_RUNTIME_STATE =
           ["@types/dotenv", "npm:8.2.3"],\
           ["@types/jest", "npm:29.5.14"],\
           ["@types/node", "npm:20.19.1"],\
+          ["dotenv", "npm:16.5.0"],\
           ["jest", "virtual:47a277efb8acd10d6b4be87e73cfb8dfce83ff5754dfbb354215b9cda8650468457747211bd66d4b166eb9a9629df7480f64a54a52342555e2db0703b39db4b0#npm:29.7.0"],\
           ["jest-util", "npm:29.7.0"],\
           ["rimraf", "npm:6.0.1"],\

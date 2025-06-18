@@ -9,7 +9,7 @@ module.exports = {
       displayName: `${pkg}:unit`,
       roots: ["<rootDir>/src", "<rootDir>/tests/unit"],
       setupFilesAfterEnv: ["<rootDir>/tests/unit/jest.setup.unit.js"],
-      testMatch: ["**/tests/unit/**/*.spec.ts"],
+      testMatch: ["**/tests/unit/**/*.spec.{ts,js}"],
     },
     {
       ...base,

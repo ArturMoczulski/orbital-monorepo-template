@@ -11,7 +11,7 @@
     "test:e2e": "jest --selectProjects e2e",
     "test": "jest --coverage"
   },
-  "peerDependencies": {
+  "dependencies": {
     "dotenv": "^16.3.1"
   },
   "devDependencies": {
