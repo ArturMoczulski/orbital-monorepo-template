@@ -1,8 +1,9 @@
 const { internalPackages } = require("./orb.json");
+const commonConfig = require("./jest.common.js");
 
 /**
- * Aggregate each internal package’s Jest config path
- * into the root “projects” array for monorepo testing.
+ * Aggregate each internal package's Jest config path
+ * into the root "projects" array for monorepo testing.
  */
 const projects = internalPackages.map((name) => {
   if (name.startsWith("@")) {
@@ -12,4 +13,7 @@ const projects = internalPackages.map((name) => {
   return `<rootDir>/tools/${name}`;
 });
 
-module.exports = { projects };
+module.exports = {
+  ...commonConfig,
+  projects,
+};

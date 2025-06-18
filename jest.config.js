@@ -1,7 +1,8 @@
+import commonConfig from "./jest.common.js";
+
 export default {
-  // Ignore template directories to prevent naming collisions
-  modulePathIgnorePatterns: ["<rootDir>/templates"],
-  testEnvironment: "node",
+  ...commonConfig,
+  // ESM-specific overrides
   transform: {},
   moduleFileExtensions: ["js", "json"],
   testMatch: ["**/bin/tools/__tests__/**/*.spec.js"],

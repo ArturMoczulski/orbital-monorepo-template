@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { internalPackages } = require("./orb.json");
+const commonConfig = require("./jest.common.js");
 
 // Directories to scan for all packages
 const baseDirs = ["libs", "services", "clients", "tools"];
@@ -55,18 +56,16 @@ function getProjects() {
 }
 
 module.exports = {
+  ...commonConfig,
+  // CJS-specific overrides
   preset: "ts-jest",
-  testEnvironment: "node",
   moduleFileExtensions: ["ts", "tsx", "js", "json", "node"],
   displayName: "default",
   testMatch: ["**/?(*.)+(spec|test).ts?(x)"],
   projects: getProjects(),
-  modulePathIgnorePatterns: ["/templates/", "/dist/"],
-  testPathIgnorePatterns: ["/node_modules/", "/templates/", "/dist/"],
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
-  transformIgnorePatterns: ["/node_modules/", "/dist/"],
   globals: {
     "ts-jest": {
       tsconfig: {
