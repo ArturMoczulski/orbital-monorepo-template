@@ -18,9 +18,9 @@
     "test:plop-modify-json": "yarn workspace @orbital/plop-modify-json test",
     "lint": "turbo run lint",
     "orb": "yarn workspace @orbital/orb run build && node tools/@orbital/orb/dist/src/index.js",
-    "start:dev": "dotenv-flow -e development -- turbo run dev",
-    "start:staging": "dotenv-flow -e staging -- turbo run dev",
-    "start:prod": "dotenv-flow -e production -- turbo run dev"
+    "start:dev": "turbo run dev",
+    "start:staging": "turbo run dev --env=staging",
+    "start:prod": "turbo run dev --env=production"
   },
   "devDependencies": {
     "@babel/core": "^7.22.15",

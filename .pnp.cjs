@@ -5058,7 +5058,6 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["@orbital/plop-modify-json", "workspace:tools/@orbital/plop-modify-json"],\
           ["@types/jest", "npm:29.5.14"],\
-          ["dotenv-flow", "npm:4.1.0"],\
           ["jest", "virtual:47a277efb8acd10d6b4be87e73cfb8dfce83ff5754dfbb354215b9cda8650468457747211bd66d4b166eb9a9629df7480f64a54a52342555e2db0703b39db4b0#npm:29.7.0"],\
           ["jest-util", "npm:29.7.0"],\
           ["rimraf", "npm:6.0.1"],\
@@ -6680,25 +6679,6 @@ const RAW_RUNTIME_STATE =
           ["dot-case", "npm:3.0.4"],\
           ["no-case", "npm:3.0.4"],\
           ["tslib", "npm:2.8.1"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["dotenv", [\
-      ["npm:16.5.0", {\
-        "packageLocation": "../../.yarn/berry/cache/dotenv-npm-16.5.0-67343a179e-10c0.zip/node_modules/dotenv/",\
-        "packageDependencies": [\
-          ["dotenv", "npm:16.5.0"]\
-        ],\
-        "linkType": "HARD"\
-      }]\
-    ]],\
-    ["dotenv-flow", [\
-      ["npm:4.1.0", {\
-        "packageLocation": "../../.yarn/berry/cache/dotenv-flow-npm-4.1.0-74ebe7c968-10c0.zip/node_modules/dotenv-flow/",\
-        "packageDependencies": [\
-          ["dotenv", "npm:16.5.0"],\
-          ["dotenv-flow", "npm:4.1.0"]\
         ],\
         "linkType": "HARD"\
       }]\

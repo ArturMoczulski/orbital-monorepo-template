@@ -10,17 +10,15 @@
     "test:integration": "jest --selectProjects integration",
     "test:e2e": "jest --selectProjects e2e",
     "test": "jest --coverage",
-    "start:dev": "dotenv-flow -e development -- node dist/index.js",
-    "start:staging": "dotenv-flow -e staging -- node dist/index.js",
-    "start:prod": "dotenv-flow -e production -- node dist/index.js"
+    "start:dev": "node dist/index.js",
+    "start:staging": "node dist/index.js",
+    "start:prod": "node dist/index.js"
   },
   "devDependencies": {
     "@types/jest": "^29.0.0",
     "jest": "^29.0.0",
     "ts-jest": "^29.0.0",
     "typescript": "^5.0.0",
-    "rimraf": "^6.0.0",
-    "dotenv-flow": "^4.1.0",
-    "dotenv-flow-cli": "^1.1.1"
+    "rimraf": "^6.0.0"
   }
 }

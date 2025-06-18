@@ -20,7 +20,7 @@ This repository contains a **living template** for a full-stack monorepo powered
 - Yarn Plug’n’Play (PnP) support
 - Turborepo for fast task pipelines (`build`, `test`, `lint`)
 - Built-in scaffolding CLI (`yarn orb`)
-- Environment management using `dotenv-flow`
+- Environment management with .env files
 - Preconfigured Jest (unit/integration/e2e) with `ts-jest`
 
 ## Getting Started
@@ -86,12 +86,12 @@ yarn orb monorepo update  # Update the monorepo by merging from monorepo-templat
 
 ## Environment Variables
 
-This monorepo uses [`dotenv-flow`](https://github.com/kerimdzhanov/dotenv-flow) to load layered env files:
+This monorepo supports environment variables through standard .env files:
 
 1. Root files: `.env`, `.env.development`, `.env.production`, etc.
 2. Package files: `packages/<name>/.env.template`, `.env.development`, etc.
 
-Variables merge in order, with package-level overrides. Use `dotenv-flow` in scripts or via the CLI.
+Variables can be loaded in your application code using standard environment loading patterns.
 
 ## Package Templates
 
